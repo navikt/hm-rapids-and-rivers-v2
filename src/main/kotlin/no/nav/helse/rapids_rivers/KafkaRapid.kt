@@ -236,7 +236,7 @@ class KafkaRapid(
         }
     }
 
-    internal fun getMetrics() = listOf(KafkaClientMetrics(consumer), KafkaClientMetrics(producer))
+    fun getMetrics() = listOf(KafkaClientMetrics(consumer), KafkaClientMetrics(producer))
 
     companion object {
         private const val Stopped = false
