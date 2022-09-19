@@ -52,6 +52,8 @@ class KafkaRapid(
 
     fun isRunning() = running.get()
     fun isReady() = isRunning() && ready.get()
+    fun isConsumerClosed() = !isRunning()
+    fun isProducerClosed() = producerClosed.get()
 
     override fun publish(message: String) {
         publish(ProducerRecord(rapidTopic, message))
@@ -62,11 +64,11 @@ class KafkaRapid(
     }
 
     override fun publishWithTimeout(message: String, timeoutInSec: Long) {
-        publishTimeOut(message, timeoutInSec)
+        publishTimeOut(ProducerRecord(rapidTopic, message), timeoutInSec)
     }
 
     override fun publishWithTimeout(key: String, message: String, timeoutInSec: Long) {
-        publishTimeOut(key, message, timeoutInSec )
+        publishTimeOut(ProducerRecord(rapidTopic, key, message), timeoutInSec )
     }
 
     override fun rapidName(): String {
@@ -79,21 +81,28 @@ class KafkaRapid(
             if (err == null || !isFatalError(err)) return@send
             log.error("Shutting down rapid due to fatal error: ${err.message}", err)
             stop()
+            closeProducerResources()
         }
     }
 
     /**
      * venter på ack med en timeout
      */
-    private fun publishTimeOut(key: String, message: String, timeOutSec: Long = 10) {
-         check(!producerClosed.get()) { "can't publish messages when producer is closed" }
-        producer.send(ProducerRecord(rapidTopic, key, message)).get(timeOutSec, TimeUnit.SECONDS)
+    private fun publishTimeOut(producerRecord: ProducerRecord<String, String>, timeOutSec: Long = 10) {
+        check(!producerClosed.get()) { "can't publish messages when producer is closed" }
+        try {
+            producer.send(producerRecord).get(timeOutSec, TimeUnit.SECONDS)
+        }
+        catch (err: Exception) {
+            if (isFatalError(err)) {
+                log.error("Shutting down rapid due to fatal error: ${err.message}", err)
+                stop()
+                closeProducerResources()
+            }
+            throw (err)
+        }
     }
 
-    private fun publishTimeOut(message: String, timeOutSec: Long = 10) {
-        check(!producerClosed.get()) { "can't publish messages when producer is closed" }
-        producer.send(ProducerRecord(rapidTopic, message)).get(timeOutSec, TimeUnit.SECONDS)
-    }
 
     override fun start() {
         log.info("starting rapid")
@@ -181,7 +190,7 @@ class KafkaRapid(
             throw err
         } finally {
             notifyShutdown()
-            closeResources(lastException)
+            closeConsumerResources(lastException)
         }
     }
 
@@ -215,18 +224,30 @@ class KafkaRapid(
         return OffsetAndMetadata(offset, metadata)
     }
 
-    private fun closeResources(lastException: Exception?) {
+    private fun closeConsumerResources(lastException: Exception?) {
         if (Started == running.getAndSet(Stopped)) {
             log.warn("stopped consuming messages due to an error", lastException)
         } else {
             log.info("stopped consuming messages after receiving stop signal")
         }
-        producerClosed.set(true)
-        tryAndLog(producer::flush)
-        tryAndLog(producer::close)
         tryAndLog(consumer::unsubscribe)
         tryAndLog(consumer::close)
     }
+
+    private fun closeProducerResources() {
+        producerClosed.set(true)
+        tryAndLog(producer::flush)
+        tryAndLog(producer::close)
+    }
+
+//    private fun closeResources(lastException: Exception?) {
+//        if (Started == running.getAndSet(Stopped)) {
+//            log.warn("stopped consuming messages due to an error", lastException)
+//        } else {
+//            log.info("stopped consuming messages after receiving stop signal")
+//        }
+//
+//    }
 
     private fun tryAndLog(block: () -> Unit) {
         try {
@@ -254,6 +275,7 @@ class KafkaRapid(
             is RecordBatchTooLargeException,
             is RecordTooLargeException,
             is UnknownServerException,
+            is TimeoutException,
             is AuthorizationException -> true
             else -> false
         }
