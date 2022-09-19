@@ -240,15 +240,6 @@ class KafkaRapid(
         tryAndLog(producer::close)
     }
 
-//    private fun closeResources(lastException: Exception?) {
-//        if (Started == running.getAndSet(Stopped)) {
-//            log.warn("stopped consuming messages due to an error", lastException)
-//        } else {
-//            log.info("stopped consuming messages after receiving stop signal")
-//        }
-//
-//    }
-
     private fun tryAndLog(block: () -> Unit) {
         try {
             block()
