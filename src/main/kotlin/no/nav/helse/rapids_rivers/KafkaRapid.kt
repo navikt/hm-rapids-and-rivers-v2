@@ -43,6 +43,7 @@ class KafkaRapid(
 
     init {
         log.info("rapid initialized, autoCommit=$autoCommit")
+
     }
 
     fun seekToBeginning() {
@@ -248,7 +249,7 @@ class KafkaRapid(
         }
     }
 
-    fun getMetrics() = listOf(KafkaClientMetrics(consumer), KafkaClientMetrics(producer))
+    fun getMetrics() = listOf(KafkaClientMetrics(consumer), KafkaClientMetrics(producer), KafkaRapidMetrics(this))
 
     companion object {
         private const val Stopped = false
