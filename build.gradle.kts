@@ -82,9 +82,9 @@ tasks.withType<Wrapper> {
 
 repositories {
     mavenLocal()
-    maven("https://jitpack.io")
-    maven("https://packages.confluent.io/maven/")
     mavenCentral()
+    maven("https://packages.confluent.io/maven/")
+
 }
 
 val githubUser: String? by project
