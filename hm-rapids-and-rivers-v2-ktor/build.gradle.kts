@@ -106,7 +106,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
 
             pom {
-                name.set("hm-rapids-rivers-v2")
+                name.set("hm-rapids-rivers-v2-ktor")
                 description.set("hm rapids and rivers v2")
                 url.set("https://github.com/navikt/hm-rapids-and-rivers-v2")
 
