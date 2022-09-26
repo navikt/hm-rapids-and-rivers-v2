@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
@@ -24,7 +25,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":hm-rapids-and-rivers-v2-core"))
     api("ch.qos.logback:logback-classic:$logbackClassicVersion")
     api("net.logstash.logback:logstash-logback-encoder:$logbackEncoderVersion")
 
@@ -42,7 +43,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 
-    testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedVersion"){
+    testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedVersion")
+    {
         exclude("log4j")
         exclude("org.glassfish")
         exclude("io.netty")
