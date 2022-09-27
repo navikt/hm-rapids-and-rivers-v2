@@ -31,7 +31,6 @@ dependencies {
 
     api("io.ktor:ktor-server-cio:$ktorVersion")
 
-    api("org.apache.kafka:kafka-clients:$kafkaVersion")
 
     api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
