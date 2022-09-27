@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
@@ -24,12 +25,11 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":hm-rapids-and-rivers-v2-core"))
     api("ch.qos.logback:logback-classic:$logbackClassicVersion")
     api("net.logstash.logback:logstash-logback-encoder:$logbackEncoderVersion")
 
     api("io.ktor:ktor-server-cio:$ktorVersion")
-
-    api("org.apache.kafka:kafka-clients:$kafkaVersion")
 
     api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
@@ -41,7 +41,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 
-    testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedVersion"){
+    testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedVersion")
+    {
         exclude("log4j")
         exclude("org.glassfish")
         exclude("io.netty")
@@ -52,7 +53,6 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.toVersion(jvmTarget)
     targetCompatibility = JavaVersion.toVersion(jvmTarget)
-
     withSourcesJar()
 }
 
@@ -104,7 +104,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
 
             pom {
-                name.set("hm-rapids-rivers-v2")
+                name.set("hm-rapids-rivers-v2-ktor")
                 description.set("hm rapids and rivers v2")
                 url.set("https://github.com/navikt/hm-rapids-and-rivers-v2")
 
