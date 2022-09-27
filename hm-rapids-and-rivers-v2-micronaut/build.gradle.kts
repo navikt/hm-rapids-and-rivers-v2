@@ -4,8 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 val jvmTarget = "17"
-
-val ktorVersion = "2.1.0"
+val micronautVersion="3.7.0"
 val kafkaVersion = "3.2.1"
 val micrometerRegistryPrometheusVersion = "1.9.1"
 val junitJupiterVersion = "5.9.0"
@@ -20,23 +19,23 @@ version = properties["version"] ?: "local-build"
 
 plugins {
     kotlin("jvm") version "1.7.0"
+    kotlin("kapt") version "1.7.0"
+    kotlin("plugin.allopen") version "1.7.0"
     id("java")
     id("maven-publish")
+    id("io.micronaut.library") version "3.6.1"
 }
+
 
 dependencies {
     implementation(project(":hm-rapids-and-rivers-v2-core"))
+
     api("ch.qos.logback:logback-classic:$logbackClassicVersion")
     api("net.logstash.logback:logstash-logback-encoder:$logbackEncoderVersion")
 
-    api("io.ktor:ktor-server-cio:$ktorVersion")
-
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-
-    api("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
-    api("io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheusVersion")
-
+    implementation("io.micronaut:micronaut-runtime")
+    implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
+    testImplementation("io.micronaut.test:micronaut-test-junit5")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
@@ -48,6 +47,16 @@ dependencies {
         exclude("io.netty")
     }
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
+}
+
+micronaut {
+    version.set(micronautVersion)
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("no.nav.hm.rapids_rivers.micronaut.*")
+    }
 }
 
 java {
@@ -104,8 +113,8 @@ publishing {
         create<MavenPublication>("mavenJava") {
 
             pom {
-                name.set("hm-rapids-rivers-v2-ktor")
-                description.set("hm rapids and rivers v2")
+                name.set("hm-rapids-rivers-v2-micronaut")
+                description.set("hm rapids and rivers v2 micronaut setup")
                 url.set("https://github.com/navikt/hm-rapids-and-rivers-v2")
 
                 licenses {
