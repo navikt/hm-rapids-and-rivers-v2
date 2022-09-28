@@ -9,17 +9,19 @@ import org.junit.jupiter.api.Test
 @MicronautTest
 @Property(name = "kafka.brokers", value = "localhost:9092")
 class RapidApplicationTest(private val kafkaProperties: KafkaProperties,
-                           private val kafkaRapid: KafkaRapid) {
-
-    @Test
-    fun `Kafka props should be created`() {
-        Assertions.assertNotNull(kafkaProperties.brokers)
-        Assertions.assertEquals(kafkaProperties.brokers, "localhost:9092")
-    }
+                           private val kafkaRapid: KafkaRapid,
+                           private val testRiver: River) {
 
     @Test
     fun `Rapid should be created`() {
+        Assertions.assertNotNull(kafkaProperties.brokers)
+        Assertions.assertEquals(kafkaProperties.brokers, "localhost:9092")
         Assertions.assertNotNull(kafkaRapid)
+    }
+
+    @Test
+    fun `River is running`() {
+         Assertions.assertNotNull(testRiver)
     }
 
 }
