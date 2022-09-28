@@ -1,6 +1,7 @@
 package no.nav.hm.rapids_rivers.micronaut
 
 import io.micronaut.aop.*
+import io.micronaut.context.annotation.Context
 import io.micronaut.context.annotation.Factory
 import no.nav.helse.rapids_rivers.RapidsConnection
 

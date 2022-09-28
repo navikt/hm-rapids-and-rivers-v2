@@ -39,7 +39,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-
+    testImplementation("io.micronaut:micronaut-http-server-netty")
     testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedVersion")
     {
         exclude("log4j")
