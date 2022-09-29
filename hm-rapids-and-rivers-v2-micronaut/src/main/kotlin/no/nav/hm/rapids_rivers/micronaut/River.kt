@@ -28,6 +28,11 @@ abstract class River(rapidsConnection: RapidsConnection): River.PacketListener{
         river.register(this)
     }
 
+    fun register(packetListener: River.PacketListener) {
+        LOG.info("Registering ${packetListener.javaClass.simpleName}")
+        river.register(packetListener)
+    }
+
     override fun onError(problems: MessageProblems, context: MessageContext) {
         securedLog.info("River required keys had problems in parsing message from rapid: ${problems.toExtendedReport()}")
         throw RuntimeException("River required keys had problems in parsing message from rapid, see Kibana index tjenestekall-* (sikkerlogg) for details")
