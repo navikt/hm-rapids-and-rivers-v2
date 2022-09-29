@@ -51,7 +51,7 @@ dependencies {
 
 micronaut {
     version.set(micronautVersion)
-    runtime("netty")
+    testRuntime("netty")
     testRuntime("junit5")
     processing {
         incremental(true)
