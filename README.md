@@ -1,6 +1,6 @@
 # hm-rapid-and-rivers-v2
 ## About
-Rapids and riversn (R&R) concept based on ideas of Fred George
+Rapids and Rivers (R&R) concept based on ideas of Fred George
 
 ## Core
 Main NAV implementations
