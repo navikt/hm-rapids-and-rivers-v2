@@ -1,0 +1,8 @@
+micronaut:
+  application:
+    name: hm-rapids-and-rivers-v2
+    thread-selection: auto
+  executors:
+    consumer:
+      type: fixed
+      nThreads: 1
