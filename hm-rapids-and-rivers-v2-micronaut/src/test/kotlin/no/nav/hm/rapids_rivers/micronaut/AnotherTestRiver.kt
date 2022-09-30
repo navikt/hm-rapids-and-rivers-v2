@@ -7,7 +7,7 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.River
 
 @Context
-class TestRiver(river: RiverHead): River.PacketListener {
+class AnotherTestRiver(river: RiverHead): River.PacketListener {
 
     init {
         river
