@@ -268,6 +268,7 @@ class KafkaRapid(
             is RecordTooLargeException,
             is UnknownServerException,
             is TimeoutException,
+            is ClusterAuthorizationException,
             is AuthorizationException -> true
             else -> false
         }

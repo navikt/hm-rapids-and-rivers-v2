@@ -1,7 +1,6 @@
 package no.nav.hm.rapids_rivers.micronaut
 
 import io.micronaut.context.annotation.Context
-import jakarta.inject.Singleton
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.River
