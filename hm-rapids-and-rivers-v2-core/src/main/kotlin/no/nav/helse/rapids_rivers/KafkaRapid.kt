@@ -91,17 +91,12 @@ class KafkaRapid(
      */
     private fun publishTimeOut(producerRecord: ProducerRecord<String, String>, timeOutSec: Long = 10) {
         check(!producerClosed.get()) { "can't publish messages when producer is closed" }
-        try {
-            producer.send(producerRecord).get(timeOutSec, TimeUnit.SECONDS)
-        }
-        catch (err: Exception) {
-            if (isFatalError(err)) {
-                log.error("Shutting down rapid due to fatal error: ${err.message}", err)
-                stop()
-                closeProducerResources()
-            }
-            throw (err)
-        }
+        producer.send(producerRecord) { _, err ->
+            if (err == null || !isFatalError(err)) return@send
+            log.error("Shutting down rapid due to fatal error: ${err.message}", err)
+            stop()
+            closeProducerResources()
+        }.get(timeOutSec, TimeUnit.SECONDS)
     }
 
 
@@ -262,13 +257,12 @@ class KafkaRapid(
             extraTopics = extraTopics
         )
 
-        private fun isFatalError(err: Exception) = when (err) {
+        fun isFatalError(err: Exception) = when (err) {
             is InvalidTopicException,
             is RecordBatchTooLargeException,
             is RecordTooLargeException,
             is UnknownServerException,
             is TimeoutException,
-            is ClusterAuthorizationException,
             is AuthorizationException -> true
             else -> false
         }
