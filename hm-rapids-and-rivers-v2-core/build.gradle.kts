@@ -3,12 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 val jvmTarget = "17"
-
-val kafkaVersion = "3.2.1"
+val kafkaVersion = "3.3.1"
 val micrometerRegistryPrometheusVersion = "1.9.1"
-val junitJupiterVersion = "5.9.0"
-val jacksonVersion = "2.13.3"
-val logbackClassicVersion = "1.2.11"
+val junitJupiterVersion = "5.9.1"
+val jacksonVersion = "2.14.1"
+val logbackClassicVersion = "1.4.5"
 val logbackEncoderVersion = "7.2"
 val kafkaEmbeddedVersion = "3.2.1"
 val awaitilityVersion = "4.2.0"
