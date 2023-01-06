@@ -6,3 +6,5 @@ micronaut:
     consumer:
       type: fixed
       nThreads: 1
+rapidsandrivers:
+  enabled: false

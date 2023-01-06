@@ -9,7 +9,7 @@ import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.KafkaRapid
 
 @Factory
-@Requires(notEnv = ["${Environment.TEST}"])
+@Requires(property = "rapidsandrivers.enabled", notEquals="false", defaultValue = "true")
 class RapidsRiversFactory {
 
     @Singleton
