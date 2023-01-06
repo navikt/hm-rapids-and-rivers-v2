@@ -1,5 +1,6 @@
 package no.nav.hm.rapids_rivers.micronaut
 
+import io.micronaut.context.annotation.Requires
 import io.micronaut.context.event.ApplicationEventListener
 import io.micronaut.runtime.server.event.ServerStartupEvent
 import io.micronaut.scheduling.TaskExecutors
@@ -9,6 +10,7 @@ import no.nav.helse.rapids_rivers.KafkaRapid
 import org.slf4j.LoggerFactory
 
 @Singleton
+@Requires(bean = KafkaRapid::class)
 open class RapidStartupEventListener(private val rapid: KafkaRapid): ApplicationEventListener<ServerStartupEvent> {
 
     companion object {

@@ -2,11 +2,14 @@
 package no.nav.hm.rapids_rivers.micronaut
 
 import io.micronaut.context.annotation.Factory
+import io.micronaut.context.annotation.Requires
+import io.micronaut.context.env.Environment
 import jakarta.inject.Singleton
 import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.KafkaRapid
 
 @Factory
+@Requires(notEnv = ["${Environment.TEST}"])
 class RapidsRiversFactory {
 
     @Singleton
