@@ -22,8 +22,8 @@ subprojects {
     val jacksonVersion = "2.14.1"
     val logbackClassicVersion = "1.4.5"
     val logbackEncoderVersion = "7.2"
-    val kafkaEmbeddedVersion = "3.2.1"
     val awaitilityVersion = "4.2.0"
+    val kafkaTestcontainerVersion = "1.17.6"
 
     group = "com.github.navikt"
     version = properties["version"] ?: "local-build"
@@ -44,13 +44,8 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
         testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-
-        testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedVersion") {
-            exclude("log4j")
-            exclude("org.glassfish")
-            exclude("io.netty")
-        }
         testImplementation("org.awaitility:awaitility:$awaitilityVersion")
+        testImplementation("org.testcontainers:kafka:$kafkaTestcontainerVersion")
     }
 
     java {
