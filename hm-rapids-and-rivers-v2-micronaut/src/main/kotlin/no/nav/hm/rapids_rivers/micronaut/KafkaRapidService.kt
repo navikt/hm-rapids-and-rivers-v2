@@ -16,10 +16,14 @@ class KafkaRapidService(private val kafkaRapid: KafkaRapid, private val objectMa
         private val LOG = LoggerFactory.getLogger(KafkaRapidService::class.java)
     }
 
-    fun <T : Any> pushToRapid(key: String?, eventName: String?, payload: T) {
+    fun <T : Any> pushToRapid(key: String?, eventName: String?, payload: T,
+                              keyValues : Map<String, Any> = emptyMap()) {
         val eventId =  UUID.randomUUID()
-        LOG.debug("push to rapid key: $key eventId: $eventId eventName: $eventName")
-        produceEvent(key, mapOf("eventId" to eventId, "eventName" to eventName, "payload" to payload))
+        LOG.debug("push to rapid key: $key, eventId: $eventId, eventName: $eventName, " +
+                "payloadType: ${payload::class.java.simpleName}")
+        produceEvent(key, mapOf("eventId" to eventId, "eventName" to eventName,
+            "payloadType" to payload::class.java.simpleName, "payload" to payload)
+            .plus(keyValues))
     }
 
     private fun <T> produceEvent(key: String?, event: T) {
