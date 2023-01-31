@@ -10,20 +10,21 @@ import java.util.*
 
 @Singleton
 @Requires(bean = KafkaRapid::class)
-class KafkaRapidService(private val kafkaRapid: KafkaRapid, private val objectMapper: ObjectMapper) {
+class KafkaRapidService(private val kafkaRapid: KafkaRapid,
+                        private val objectMapper: ObjectMapper): RapidPushService {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(KafkaRapidService::class.java)
     }
 
-    fun <T : Any> pushToRapid(key: String?, eventName: String?, payload: T,
-                              keyValues : Map<String, Any> = emptyMap()) {
+    override fun <T : Any> pushToRapid(key: String?, eventName: String?, payload: T,
+                                       keyValues : Map<String, Any>) {
         val eventId =  UUID.randomUUID()
         LOG.debug("push to rapid key: $key, eventId: $eventId, eventName: $eventName, " +
                 "payloadType: ${payload::class.java.simpleName}")
         produceEvent(key, mapOf("eventId" to eventId, "eventName" to eventName,
             "payloadType" to payload::class.java.simpleName, "payload" to payload)
-            .plus(keyValues))
+            .plus(keyValues).filterValues { it!=null })
     }
 
     private fun <T> produceEvent(key: String?, event: T) {

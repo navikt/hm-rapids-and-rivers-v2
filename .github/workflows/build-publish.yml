@@ -25,16 +25,3 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-#  snyk:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v1
-#      - name: Gradle vulnerability check
-#        uses: snyk/actions/gradle-jdk17@master
-#        env:
-#          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-#          ORG_GRADLE_PROJECT_githubUser: x-access-token
-#          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          args: --org=teamdigihot --fail-on=all --project-name=hm-rapids-and-rivers-v2
-#          command: monitor
