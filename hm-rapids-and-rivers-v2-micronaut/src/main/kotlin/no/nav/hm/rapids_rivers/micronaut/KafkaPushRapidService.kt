@@ -6,6 +6,7 @@ import jakarta.inject.Singleton
 import no.nav.helse.rapids_rivers.KafkaRapid
 import org.apache.kafka.common.KafkaException
 import org.slf4j.LoggerFactory
+import java.time.LocalDateTime
 import java.util.*
 
 @Singleton
@@ -23,6 +24,7 @@ class KafkaRapidService(private val kafkaRapid: KafkaRapid,
         LOG.debug("push to rapid key: $key, eventId: $eventId, eventName: $eventName, " +
                 "payloadType: ${payload::class.java.simpleName}")
         produceEvent(key, mapOf("eventId" to eventId, "eventName" to eventName,
+            "createdTime" to LocalDateTime.now(),
             "payloadType" to payload::class.java.simpleName, "payload" to payload)
             .plus(keyValues).filterValues { it!=null })
     }
