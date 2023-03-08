@@ -1,4 +1,4 @@
-val micronautVersion="3.8.5"
+val micronautVersion="3.8.6"
 
 plugins {
     kotlin("kapt")
