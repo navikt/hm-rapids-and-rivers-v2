@@ -1,5 +1,5 @@
 val micrometerRegistryPrometheusVersion = "1.9.1"
-val ktorVersion = "2.1.3"
+val ktorVersion = "2.3.0"
 
 dependencies {
     implementation(project(":hm-rapids-and-rivers-v2-core"))
