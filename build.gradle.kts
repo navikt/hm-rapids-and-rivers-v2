@@ -83,6 +83,5 @@ subprojects {
         mavenLocal()
         mavenCentral()
         maven("https://packages.confluent.io/maven/")
-
     }
 }

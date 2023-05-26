@@ -1,9 +1,11 @@
-val micronautVersion="3.8.6"
+import org.gradle.internal.execution.history.changes.ExecutionStateChanges.incremental
+
+val micronautVersion="3.9.2"
 
 plugins {
     kotlin("kapt")
     kotlin("plugin.allopen") version "1.7.0"
-    id("io.micronaut.library") version "3.7.2"
+    id("io.micronaut.library") version "3.7.8"
 }
 
 dependencies {
