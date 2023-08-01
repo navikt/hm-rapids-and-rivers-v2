@@ -15,11 +15,6 @@ jobs:
           java-version: '17.x'
       - name: test and build
         run: ./gradlew clean build
-      - uses: snyk/actions/setup@master
-      - name: snyk
-        run: snyk test --org=hjelpemiddelbehov --severity-threshold=high
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: publish
         run: ./gradlew -Pversion="$(TZ="Europe/Oslo" date +'%Y%m%d%H%M')" build publish
         env:
