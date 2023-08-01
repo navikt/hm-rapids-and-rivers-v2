@@ -1,15 +1,17 @@
 import org.gradle.internal.execution.history.changes.ExecutionStateChanges.incremental
 
-val micronautVersion="3.9.4"
+val micronautVersion="4.0.1"
 
 plugins {
     kotlin("kapt")
-    kotlin("plugin.allopen") version "1.7.0"
-    id("io.micronaut.library") version "3.7.8"
+    id("io.micronaut.library") version "4.0.2"
 }
 
 dependencies {
     implementation(project(":hm-rapids-and-rivers-v2-core"))
+    runtimeOnly("org.yaml:snakeyaml")
+    implementation("io.micronaut:micronaut-jackson-databind")
+
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
