@@ -2,21 +2,40 @@ name: build and publish
 
 on:
   push:
+    paths-ignore:
+      - "**.md"
+      - ".gitignore"
+      - "LICENCE"
+      - "CODEOWNERS"
     branches:
       - main
-
 jobs:
   build-publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-java@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
         with:
           java-version: '17.x'
       - name: test and build
-        run: ./gradlew clean build
+        run: ./build.sh
+      - name: prepare release
+        run: ./prepare-release.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: publish
-        run: ./gradlew -Pversion="$(TZ="Europe/Oslo" date +'%Y%m%d%H%M')" build publish
+        run: ./gradlew -Pversion="$VERSION_TAG" publish
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
+      - name: create release
+        uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag: ${{ env.VERSION_TAG }}
+          name: ${{ env.VERSION_TAG }}
+          body: ${{ env.CHANGE_LOG }}
+          draft: false
+          prerelease: false
+
