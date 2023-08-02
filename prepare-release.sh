@@ -10,7 +10,7 @@ GITHUB_URL="https://api.github.com/repos/$GITHUB_REPOSITORY"
 VERSION_TAG=$(TZ="Europe/Oslo" date +'%Y%m%d%H%M')
 echo "VERSION_TAG=$VERSION_TAG" >> "$GITHUB_ENV"
 
-if ! git describe --abbrev=0 --tags &>/dev/null; then
+if [ ! git describe --abbrev=0 --tags &>/dev/null ]; then
   FIRST_COMMIT=$(git rev-list --max-parents=0 HEAD)
   git tag "CD_autocreate_tag" $FIRST_COMMIT
   echo "No tags found. Created one on the initial commit"
