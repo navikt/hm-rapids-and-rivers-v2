@@ -25,19 +25,19 @@ jobs:
         run: ./prepare-release.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: publish
-        run: ./gradlew -Pversion="$VERSION_TAG" publish
-        env:
-          ORG_GRADLE_PROJECT_githubUser: x-access-token
-          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-      - name: create release
-        uses: ncipollo/release-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag: ${{ env.VERSION_TAG }}
-          name: ${{ env.VERSION_TAG }}
-          body: ${{ env.CHANGE_LOG }}
-          draft: false
-          prerelease: false
+#      - name: publish
+#        run: ./gradlew -Pversion="$VERSION_TAG" publish
+#        env:
+#          ORG_GRADLE_PROJECT_githubUser: x-access-token
+#          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
+#      - name: create release
+#        uses: ncipollo/release-action@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag: ${{ env.VERSION_TAG }}
+#          name: ${{ env.VERSION_TAG }}
+#          body: ${{ env.CHANGE_LOG }}
+#          draft: false
+#          prerelease: false
 

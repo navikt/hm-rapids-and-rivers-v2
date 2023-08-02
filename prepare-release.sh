@@ -19,9 +19,9 @@ fi
 LATEST_TAG=$(git describe --abbrev=0 --tags)
 
 
-git remote set-url origin "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-git tag -f $VERSION_TAG
-git push -f --tags
+#git remote set-url origin "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+#git tag -f $VERSION_TAG
+#git push -f --tags
 
 
 LATEST_RELEASE=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest" | jq -r '.tag_name')
