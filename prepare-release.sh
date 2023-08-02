@@ -22,7 +22,6 @@ git remote set-url origin "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${
 git tag -f $VERSION_TAG
 git push -f --tags
 
-
 LATEST_RELEASE=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest" | jq -r '.tag_name')
 if [ "$LATEST_RELEASE" = "null" ]; then LATEST_RELEASE=$LATEST_TAG; fi
 echo "Found latest release: $LATEST_RELEASE"
