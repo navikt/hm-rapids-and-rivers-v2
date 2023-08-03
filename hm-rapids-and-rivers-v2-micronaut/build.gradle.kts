@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":hm-rapids-and-rivers-v2-core"))
     runtimeOnly("org.yaml:snakeyaml")
     implementation("io.micronaut:micronaut-jackson-databind")
-
+    kapt("io.micronaut:micronaut-inject")
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
     testImplementation("io.micronaut.test:micronaut-test-junit5")

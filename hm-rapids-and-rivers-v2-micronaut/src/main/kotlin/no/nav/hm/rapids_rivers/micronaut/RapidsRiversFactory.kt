@@ -10,13 +10,18 @@ import jakarta.inject.Singleton
 import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.KafkaRapid
 import no.nav.helse.rapids_rivers.KafkaRapidMetrics
+import org.slf4j.LoggerFactory
 
 @Factory
 @Requires(property = "rapidsandrivers.enabled", notEquals="false", defaultValue = "true")
 class RapidsRiversFactory {
 
+    companion object {
+        private val LOG = LoggerFactory.getLogger(RapidsRiversFactory::class.java)
+    }
     @Singleton
     fun createKafkaRapid(kafkaProps: KafkaProperties): KafkaRapid {
+        LOG.info("Creating kafka rapid service with bootstrap server to: ${kafkaProps.brokers}")
         val kafkaConfig = KafkaConfig(
             bootstrapServers =kafkaProps.brokers,
             consumerGroupId = kafkaProps.consumerGroupId,
