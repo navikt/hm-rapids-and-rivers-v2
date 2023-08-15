@@ -37,6 +37,11 @@ class KafkaRapid(
     private val consumer = KafkaConsumer(consumerConfig, stringDeserializer, stringDeserializer)
     private val producer = KafkaProducer(producerConfig, stringSerializer, stringSerializer)
 
+    // metric definitions
+    private val consumerMetric = KafkaClientMetrics(consumer)
+    private val producerMetric = KafkaClientMetrics(producer)
+    private val rapidMetric = KafkaRapidMetrics(this)
+
     private val topics = listOf(rapidTopic) + extraTopics
 
     private var seekToBeginning = false
@@ -244,7 +249,12 @@ class KafkaRapid(
         }
     }
 
-    fun getMetrics() = listOf(KafkaClientMetrics(consumer), KafkaClientMetrics(producer), KafkaRapidMetrics(this))
+    fun getMetrics() = listOf(consumerMetric, producerMetric, rapidMetric)
+
+    fun getConsumerMetric() = consumerMetric
+    fun getProducerMetric() = producerMetric
+    fun getRapidMetric() = rapidMetric
+
 
     companion object {
         private const val Stopped = false
