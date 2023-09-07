@@ -12,6 +12,7 @@ on:
 jobs:
   build-publish:
     permissions:
+      contents: write
       packages: write
       actions: read
     runs-on: ubuntu-latest
