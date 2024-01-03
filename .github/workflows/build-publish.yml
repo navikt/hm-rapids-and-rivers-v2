@@ -27,10 +27,12 @@ jobs:
           cache: gradle
       - name: test and build
         run: ./build.sh
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: [java-kotlin]
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
-        with:
-         languages: java-kotlin
       - name: prepare release
         run: ./prepare-release.sh
         env:
