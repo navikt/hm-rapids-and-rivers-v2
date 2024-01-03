@@ -15,6 +15,7 @@ jobs:
       contents: write
       packages: write
       actions: read
+      security-events: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -30,7 +31,6 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          external-repository-token: ${{ secrets.GITHUB_TOKEN }}
           languages: java-kotlin
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
