@@ -26,12 +26,12 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: gradle
-      - name: test and build
-        run: ./build.sh
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
           languages: java-kotlin
+      - name: test and build
+        run: ./build.sh
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
       - name: prepare release
