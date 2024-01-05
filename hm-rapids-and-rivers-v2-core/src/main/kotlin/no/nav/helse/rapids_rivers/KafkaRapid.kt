@@ -41,7 +41,8 @@ class KafkaRapid(
     // metric definitions
     private val consumerMetric = KafkaClientMetrics(consumer)
     private val producerMetric = KafkaClientMetrics(producer)
-    private val rapidMetric = KafkaRapidMetrics(this)
+    private val rapidMetric = RapidMetrics(this)
+    private val riverMetrics = RiverMetrics()
 
     private val topics = listOf(rapidTopic) + extraTopics
 
@@ -251,7 +252,7 @@ class KafkaRapid(
         }
     }
 
-    fun getMetrics() = listOf(consumerMetric, producerMetric, rapidMetric)
+    fun getMetrics() = listOf(consumerMetric, producerMetric, rapidMetric, riverMetrics)
 
     fun getConsumerMetric() = consumerMetric
     fun getProducerMetric() = producerMetric

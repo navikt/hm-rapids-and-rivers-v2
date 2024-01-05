@@ -3,6 +3,7 @@ package no.nav.helse.rapids_rivers
 import io.ktor.server.application.Application
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.*
+import io.micrometer.core.instrument.MeterRegistry
 import io.prometheus.client.CollectorRegistry
 import kotlinx.coroutines.delay
 import org.slf4j.LoggerFactory
@@ -146,10 +147,6 @@ class RapidApplication internal constructor(
             .liveness(rapid::isRunning)
             .readiness(rapid::isReady)
             .metrics(rapid.getMetrics())
-
-        fun withCollectorRegistry(registry: CollectorRegistry = CollectorRegistry.defaultRegistry) = apply {
-            ktor.withCollectorRegistry(registry)
-        }
 
         fun withKtorModule(module: Application.() -> Unit) = apply {
             ktor.module(module)

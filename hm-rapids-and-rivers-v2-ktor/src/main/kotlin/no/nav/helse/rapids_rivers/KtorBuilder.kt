@@ -34,7 +34,6 @@ import org.slf4j.Logger
 
 class KtorBuilder {
     private val builder = ApplicationEngineEnvironmentBuilder()
-    private var collectorRegistry = CollectorRegistry.defaultRegistry
     private val extraMeterBinders = mutableListOf<MeterBinder>()
 
     fun port(port: Int) = apply {
@@ -54,11 +53,7 @@ class KtorBuilder {
     fun <TEngine : ApplicationEngine, TConfiguration : ApplicationEngine.Configuration> build(factory: ApplicationEngineFactory<TEngine, TConfiguration>): ApplicationEngine = embeddedServer(factory, applicationEngineEnvironment {
         module {
             install(MicrometerMetrics) {
-                registry = PrometheusMeterRegistry(
-                    PrometheusConfig.DEFAULT,
-                    collectorRegistry,
-                    Clock.SYSTEM
-                )
+                registry = DefaultMeterRegistry.Default
                 meterBinders = listOf(
                     ClassLoaderMetrics(),
                     JvmMemoryMetrics(),
@@ -74,7 +69,7 @@ class KtorBuilder {
                     val names = call.request.queryParameters.getAll("name[]")?.toSet() ?: emptySet()
 
                     call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
-                        TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
+                        TextFormat.write004(this, DefaultMeterRegistry.collectorRegistry.filteredMetricFamilySamples(names))
                     }
                 }
             }
@@ -127,10 +122,6 @@ class KtorBuilder {
                 }
             }
         }
-    }
-
-    fun withCollectorRegistry(registry: CollectorRegistry) = apply {
-        this.collectorRegistry = registry
     }
 
     fun metrics(metrics: List<MeterBinder>) = apply {

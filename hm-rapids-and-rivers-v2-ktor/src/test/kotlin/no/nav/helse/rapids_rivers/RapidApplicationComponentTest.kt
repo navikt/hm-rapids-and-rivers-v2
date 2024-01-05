@@ -171,7 +171,7 @@ internal class RapidApplicationComponentTest {
     @DelicateCoroutinesApi
     @Test
     fun `metric values`() {
-        withRapid(collectorRegistry = CollectorRegistry.defaultRegistry) { rapid ->
+        withRapid { rapid ->
             waitForEvent("application_ready")
             rapid.publish("""{"@event_name":"ping","@id":"${UUID.randomUUID()}","ping_time":"${LocalDateTime.now()}"}""")
             waitForEvent("ping")
@@ -230,12 +230,10 @@ internal class RapidApplicationComponentTest {
     @DelicateCoroutinesApi
     private fun withRapid(
         builder: RapidApplication.Builder? = null,
-        collectorRegistry: CollectorRegistry = CollectorRegistry(),
         block: (RapidsConnection) -> Unit
     ) {
         val rapidsConnection =
             (builder ?: RapidApplication.Builder(RapidApplication.RapidApplicationConfig.fromEnv(createConfig())))
-                .withCollectorRegistry(collectorRegistry)
                 .build()
         val job = GlobalScope.launch { rapidsConnection.start() }
         try {

@@ -9,7 +9,7 @@ import java.util.UUID
 
 class PingPongTest {
     val rapid = TestRapid()
-    val river = PingPong(rapid, "pingerino", "pongaroonie")
+    val river = PingPong(rapidsConnection = rapid, appName = "pingerino", instanceId = "pongaroonie")
 
     @BeforeEach
     fun reset() {

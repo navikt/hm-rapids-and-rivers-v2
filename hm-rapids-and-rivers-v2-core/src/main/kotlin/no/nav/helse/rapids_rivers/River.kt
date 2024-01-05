@@ -1,5 +1,13 @@
 package no.nav.helse.rapids_rivers
 
+import io.micrometer.core.instrument.Clock
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Timer
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import io.micrometer.prometheus.PrometheusConfig
+import io.micrometer.prometheus.PrometheusMeterRegistry
+import io.prometheus.client.CollectorRegistry
 import no.nav.helse.rapids_rivers.River.PacketListener.Companion.Name
 import java.util.*
 
@@ -10,7 +18,21 @@ fun interface RandomIdGenerator {
     fun generateId(): String
 }
 
-class River(rapidsConnection: RapidsConnection, private val randomIdGenerator: RandomIdGenerator = RandomIdGenerator.Default) : RapidsConnection.MessageListener {
+class DefaultMeterRegistry {
+    companion object {
+        val collectorRegistry = CollectorRegistry.defaultRegistry
+        val Default = PrometheusMeterRegistry(
+            PrometheusConfig.DEFAULT,
+            collectorRegistry,
+            Clock.SYSTEM
+        )
+    }
+
+
+}
+
+class River(rapidsConnection: RapidsConnection, private val riverMetrics: RiverMetrics = RiverMetrics(),
+            private val randomIdGenerator: RandomIdGenerator = RandomIdGenerator.Default) : RapidsConnection.MessageListener{
     private val validations = mutableListOf<PacketValidation>()
 
     private val listeners = mutableListOf<PacketListener>()
@@ -57,27 +79,23 @@ class River(rapidsConnection: RapidsConnection, private val randomIdGenerator: R
         packet.interestedIn("@event_name")
         listeners.forEach {
             val eventName = packet["@event_name"].textValue() ?: "ukjent"
-            Metrics.onPacketHistorgram.labels(
-                context.rapidName(),
-                it.name(),
-                eventName
-            ).time {
+            riverMetrics.timer(context.rapidName(), it.name(), eventName) {
                 it.onPacket(packet, context)
             }
-            Metrics.onMessageCounter.labels(context.rapidName(), it.name(), "ok").inc()
+            riverMetrics.messageCounter(context.rapidName(), it.name(), "success")
         }
     }
 
     private fun onSevere(error: MessageProblems.MessageException, context: MessageContext) {
         listeners.forEach {
-            Metrics.onMessageCounter.labels(context.rapidName(), it.name(), "severe").inc()
+            riverMetrics.messageCounter(context.rapidName(), it.name(), "severe")
             it.onSevere(error, context)
         }
     }
 
     private fun onError(problems: MessageProblems, context: MessageContext) {
         listeners.forEach {
-            Metrics.onMessageCounter.labels(context.rapidName(), it.name(), "error").inc()
+            riverMetrics.messageCounter(context.rapidName(), it.name(), "error")
             it.onError(problems, context)
         }
     }

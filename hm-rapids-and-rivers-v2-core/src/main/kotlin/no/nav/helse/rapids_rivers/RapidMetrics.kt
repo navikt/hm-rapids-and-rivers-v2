@@ -4,7 +4,7 @@ import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.binder.MeterBinder
 
-class KafkaRapidMetrics(private val rapid: KafkaRapid): MeterBinder {
+class RapidMetrics(private val rapid: KafkaRapid): MeterBinder {
 
     override fun bindTo(registry: MeterRegistry) {
         Gauge.builder("rapids_rivers_consumer_active", this) {consumerActive()}.register(registry)

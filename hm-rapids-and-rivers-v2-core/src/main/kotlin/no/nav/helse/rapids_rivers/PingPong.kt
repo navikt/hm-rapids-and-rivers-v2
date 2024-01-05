@@ -1,6 +1,8 @@
 package no.nav.helse.rapids_rivers
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime

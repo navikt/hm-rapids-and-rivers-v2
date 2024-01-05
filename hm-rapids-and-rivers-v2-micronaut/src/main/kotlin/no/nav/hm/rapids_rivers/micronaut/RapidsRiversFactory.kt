@@ -2,16 +2,14 @@
 package no.nav.hm.rapids_rivers.micronaut
 
 import io.micrometer.core.instrument.binder.kafka.KafkaClientMetrics
-import io.micronaut.context.annotation.Bean
 import io.micronaut.context.annotation.Factory
-import io.micronaut.context.annotation.Primary
 import io.micronaut.context.annotation.Requires
-import io.micronaut.context.env.Environment
 import jakarta.inject.Named
 import jakarta.inject.Singleton
 import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.KafkaRapid
-import no.nav.helse.rapids_rivers.KafkaRapidMetrics
+import no.nav.helse.rapids_rivers.RapidMetrics
+import no.nav.helse.rapids_rivers.RiverMetrics
 import org.slf4j.LoggerFactory
 
 @Factory
@@ -36,7 +34,7 @@ class RapidsRiversFactory {
     }
 
     @Singleton
-    fun rapidMetrics(kafkaRapid: KafkaRapid): KafkaRapidMetrics = kafkaRapid.getRapidMetric()
+    fun rapidMetrics(kafkaRapid: KafkaRapid): RapidMetrics = kafkaRapid.getRapidMetric()
 
     @Singleton
     @Named("ConsumerMetric")
@@ -45,6 +43,9 @@ class RapidsRiversFactory {
     @Singleton
     @Named("ProducerMetric")
     fun producerMetric(kafkaRapid: KafkaRapid): KafkaClientMetrics = kafkaRapid.getProducerMetric()
+
+    @Singleton
+    fun riverMetrics(): RiverMetrics = RiverMetrics()
 
 
 }
