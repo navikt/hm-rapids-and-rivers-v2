@@ -88,7 +88,7 @@ class River(rapidsConnection: RapidsConnection, private val riverMetrics: RiverM
 
     private fun onSevere(error: MessageProblems.MessageException, context: MessageContext) {
         listeners.forEach {
-            riverMetrics.messageCounter(context.rapidName(), it.name(), "severe")
+            //riverMetrics.messageCounter(context.rapidName(), it.name(), "severe") // No point of counting this.
             it.onSevere(error, context)
         }
     }
