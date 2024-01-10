@@ -82,7 +82,7 @@ class River(rapidsConnection: RapidsConnection, private val riverMetrics: RiverM
             riverMetrics.timer(context.rapidName(), it.name(), eventName) {
                 it.onPacket(packet, context)
             }
-            riverMetrics.messageCounter(context.rapidName(), it.name(), "success")
+            riverMetrics.messageCounter(context.rapidName(), it.name(), "ok")
         }
     }
 

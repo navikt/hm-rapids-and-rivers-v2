@@ -21,7 +21,7 @@ class RiverMetrics: MeterBinder {
 
     fun messageCounter(rapidName:String, riverName: String, status: String) {
         LOG.debug("Incrementing message counter for rapid {} and river {} with status {}", rapidName, riverName, status)
-        Counter.builder("message_counter").tags("rapid",rapidName, "river", riverName, "status", "severe")
+        Counter.builder("message_counter").tags("rapid",rapidName, "river", riverName, "status", status)
             .register(meterRegistry)
             .increment()
     }
