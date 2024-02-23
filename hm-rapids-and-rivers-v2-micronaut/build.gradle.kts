@@ -1,10 +1,10 @@
 import org.gradle.internal.execution.history.changes.ExecutionStateChanges.incremental
 
-val micronautVersion="4.2.3"
+val micronautVersion="4.3.2"
 
 plugins {
     kotlin("kapt")
-    id("io.micronaut.library") version "4.2.1"
+    id("io.micronaut.library") version "4.3.2"
 }
 
 dependencies {
