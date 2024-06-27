@@ -1,12 +1,14 @@
-package no.nav.hm.rapids_rivers.micronaut
+package no.nav.hm.rapids_rivers.micronaut.deadletter
 
 import io.micronaut.context.annotation.Context
+
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.River
+import no.nav.hm.rapids_rivers.micronaut.RiverHead
 
 @Context
-class TestRiver(river: RiverHead): River.PacketListener {
+open class DeadLetterRiverTest(river: RiverHead): River.PacketListener {
 
     init {
         river
@@ -15,7 +17,11 @@ class TestRiver(river: RiverHead): River.PacketListener {
             .register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        TODO("Not yet implemented")
+    @DeadLetterSupport
+    override open fun onPacket(packet: JsonMessage, context: MessageContext) {
+
+        throw RuntimeException("Not yet implemented")
     }
+
+
 }
