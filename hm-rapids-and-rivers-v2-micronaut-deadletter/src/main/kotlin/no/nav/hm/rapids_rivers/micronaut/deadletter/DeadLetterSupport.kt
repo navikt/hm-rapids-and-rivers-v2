@@ -12,7 +12,7 @@ annotation class DeadLetterSupport(
     /**
      *     The name of the parameter that contains the messageContext
      */
-    val meesageContext: String = "context",
+    val messageContext: String = "context",
 
     /**
      *  The name of the parameter that contains the packet
