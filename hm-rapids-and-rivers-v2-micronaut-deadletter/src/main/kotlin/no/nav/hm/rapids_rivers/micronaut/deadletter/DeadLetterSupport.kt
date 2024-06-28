@@ -8,4 +8,14 @@ import io.micronaut.context.annotation.Type
 @Target(AnnotationTarget.FUNCTION)
 @Around
 @Type(DeadLetterMethodInterceptor::class)
-annotation class DeadLetterSupport
+annotation class DeadLetterSupport(
+    /**
+     *     The name of the parameter that contains the messageContext
+     */
+    val meesageContext: String = "messageContext",
+
+    /**
+     *  The name of the parameter that contains the packet
+      */
+    val packet: String = "packet"
+)

@@ -1,6 +1,5 @@
 package no.nav.hm.rapids_rivers.micronaut.deadletter
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.aop.MethodInterceptor
 import io.micronaut.aop.MethodInvocationContext
 import jakarta.inject.Singleton
@@ -19,13 +18,16 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
 
     override fun intercept(context: MethodInvocationContext<Any, Any>): Any? {
         try {
-            LOG.debug("Executing method name: ${context.name} and target method: ${context.targetMethod}")
+
+            LOG.debug("Executingtarget method: ${context.targetMethod} in class ${context.targetMethod.declaringClass.name} with arguments ${context.parameters}")
             return context.proceed()
         }
         catch (e: Exception) {
+            val riverName = context.targetMethod.declaringClass.name
             LOG.error("Error executing method ${context.targetMethod}", e)
-            val packet = context.parameters["packet"]!!.value as JsonMessage
-            val messageContext = context.parameters["messageContext"]!!.value as MessageContext
+            val annotation = context.targetMethod.getAnnotation(DeadLetterSupport::class.java)!!
+            val packet = context.parameters[annotation.packet]!!.value as JsonMessage
+            val messageContext = context.parameters[annotation.meesageContext]!!.value as MessageContext
             runBlocking {
                 deadLetterRepository.save(
                     DeadLetter(
@@ -34,7 +36,7 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
                         json = packet.toJson(),
                         error = e.message ?: e.javaClass.name,
                         topic = messageContext.rapidName(),
-                        riverName = messageContext.rapidName()
+                        riverName = riverName
                     )
                 )
             }
