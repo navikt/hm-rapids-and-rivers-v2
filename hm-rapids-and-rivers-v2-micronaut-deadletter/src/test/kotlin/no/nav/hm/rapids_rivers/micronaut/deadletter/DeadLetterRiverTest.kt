@@ -17,7 +17,7 @@ open class DeadLetterRiverTest(river: RiverHead): River.PacketListener {
             .register(this)
     }
 
-    @DeadLetterSupport(packet = "packet", meesageContext = "context")
+    @DeadLetterSupport(packet = "packet", messageContext = "context")
     override open fun onPacket(packet: JsonMessage, context: MessageContext) {
 
         throw RuntimeException("Not yet implemented")
