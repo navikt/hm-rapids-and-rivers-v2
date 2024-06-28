@@ -1,30 +1,52 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.internal.execution.history.changes.ExecutionStateChanges.incremental
 
 val micronautVersion="4.4.0"
+val jakartaPersistenceVersion = "3.1.0"
+val junitJupiterVersion = "5.9.2"
+val tcVersion = "1.17.6"
+val postgresqlVersion = "42.7.2"
 
 plugins {
-    kotlin("kapt")
     id("io.micronaut.library") version "4.4.0"
 }
 
 dependencies {
+    kapt("io.micronaut:micronaut-inject")
+    implementation("io.micronaut:micronaut-context")
     implementation(project(":hm-rapids-and-rivers-v2-core"))
+    implementation(project(":hm-rapids-and-rivers-v2-micronaut"))
     runtimeOnly("org.yaml:snakeyaml")
     implementation("io.micronaut:micronaut-jackson-databind")
-    kapt("io.micronaut:micronaut-inject")
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
+    implementation("org.postgresql:postgresql:${postgresqlVersion}")
+    implementation("io.micronaut.data:micronaut-data-jdbc")
+    runtimeOnly("io.micronaut.sql:micronaut-jdbc-hikari")
+    kapt("io.micronaut.data:micronaut-data-processor")
+
+    // coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
+
+    implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
+    implementation("io.micronaut.flyway:micronaut-flyway")
+    implementation("org.flywaydb:flyway-database-postgresql:10.6.0")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
-    testImplementation("io.micronaut:micronaut-http-server-netty")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.testcontainers:postgresql:${tcVersion}")
+
 }
 
 micronaut {
     version.set(micronautVersion)
-    testRuntime("netty")
     testRuntime("junit5")
     processing {
         incremental(false)
-        annotations("no.nav.hm.rapids_rivers.micronaut.*")
+        annotations("no.nav.hm.rapids_rivers.micronaut.deadletter.*")
     }
 }
 
@@ -45,8 +67,8 @@ publishing {
         create<MavenPublication>("mavenJava") {
 
             pom {
-                name.set("hm-rapids-rivers-v2-micronaut")
-                description.set("hm rapids and rivers v2 micronaut setup")
+                name.set("hm-rapids-rivers-v2-micronaut-deadletter")
+                description.set("hm rapids and rivers v2 micronaut deadletter setup")
                 url.set("https://github.com/navikt/hm-rapids-and-rivers-v2")
 
                 licenses {

@@ -2,7 +2,8 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.9.21"
+    kotlin("kapt") version "1.9.21"
     id("java")
     id("maven-publish")
 }
@@ -11,6 +12,7 @@ plugins {
 subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
+        plugin("org.jetbrains.kotlin.kapt")
         plugin("java")
         plugin("maven-publish")
     }
@@ -76,7 +78,7 @@ subprojects {
     }
 
     tasks.withType<Wrapper> {
-        gradleVersion = "8.0.1"
+        gradleVersion = "8.5"
     }
 
     repositories {
@@ -84,4 +86,8 @@ subprojects {
         mavenCentral()
         maven("https://packages.confluent.io/maven/")
     }
+}
+
+repositories {
+    mavenCentral()
 }
