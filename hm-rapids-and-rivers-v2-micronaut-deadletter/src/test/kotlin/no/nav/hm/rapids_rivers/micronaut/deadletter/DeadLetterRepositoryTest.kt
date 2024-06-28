@@ -15,7 +15,7 @@ class DeadLetterRepositoryTest(private val deadLetterRepository: DeadLetterRepos
         runBlocking {
             val saved = deadLetterRepository.save(
                 DeadLetter(
-                    eventId = UUID.randomUUID(),
+                    eventId = UUID.randomUUID().toString(),
                     eventName = "test",
                     json = """{"test": "test"}""",
                     error = "test",

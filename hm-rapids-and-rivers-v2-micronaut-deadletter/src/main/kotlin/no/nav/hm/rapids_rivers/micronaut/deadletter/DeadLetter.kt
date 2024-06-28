@@ -11,7 +11,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 @MappedEntity("hm_dead_letter_v1")
 data class DeadLetter(
     @field:Id
-    val eventId: UUID,
+    val eventId: String,
     val eventName: String,
     val json: String,
     val error: String,

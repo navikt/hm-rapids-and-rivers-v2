@@ -23,16 +23,19 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
             return context.proceed()
         }
         catch (e: Exception) {
-            val riverName = context.targetMethod.declaringClass.name
+            val riverName = context.targetMethod.declaringClass.simpleName
             LOG.error("Error executing method ${context.targetMethod}", e)
             val annotation = context.targetMethod.getAnnotation(DeadLetterSupport::class.java)!!
             val packet = context.parameters[annotation.packet]!!.value as JsonMessage
+            val eventId = packet["eventId"].asText() ?: UUID.randomUUID().toString()
+            val eventName = packet["eventName"].asText() ?: riverName
             val messageContext = context.parameters[annotation.messageContext]!!.value as MessageContext
+            packet
             runBlocking {
                 deadLetterRepository.save(
                     DeadLetter(
-                        eventId = UUID.randomUUID(),
-                        eventName = context.targetMethod.name,
+                        eventId = eventId,
+                        eventName = eventName,
                         json = packet.toJson(),
                         error = e.message ?: e.javaClass.name,
                         topic = messageContext.rapidName(),

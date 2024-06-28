@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS hm_dead_letter_v1
 (
-    event_id    UUID PRIMARY KEY,
+    event_id    VARCHAR(255) PRIMARY KEY,
     event_name  VARCHAR(255) NOT NULL,
     json        TEXT         NOT NULL,
     error       TEXT         NOT NULL,
