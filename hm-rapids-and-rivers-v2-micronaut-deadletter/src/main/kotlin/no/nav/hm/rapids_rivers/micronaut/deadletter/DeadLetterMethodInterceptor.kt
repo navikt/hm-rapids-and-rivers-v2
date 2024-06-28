@@ -27,7 +27,7 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
             LOG.error("Error executing method ${context.targetMethod}", e)
             val annotation = context.targetMethod.getAnnotation(DeadLetterSupport::class.java)!!
             val packet = context.parameters[annotation.packet]!!.value as JsonMessage
-            val messageContext = context.parameters[annotation.meesageContext]!!.value as MessageContext
+            val messageContext = context.parameters[annotation.messageContext]!!.value as MessageContext
             runBlocking {
                 deadLetterRepository.save(
                     DeadLetter(
