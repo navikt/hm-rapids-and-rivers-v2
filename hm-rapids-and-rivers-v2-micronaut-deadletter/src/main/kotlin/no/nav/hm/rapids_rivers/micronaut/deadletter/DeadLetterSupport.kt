@@ -17,5 +17,11 @@ annotation class DeadLetterSupport(
     /**
      *  The name of the parameter that contains the packet
       */
-    val packet: String = "packet"
+    val packet: String = "packet",
+
+    /**
+     * Set how many times to catch the exception before circuit breaker opens
+     * Default is 3
+     */
+    val exceptionsToCatch : Int = 3
 )

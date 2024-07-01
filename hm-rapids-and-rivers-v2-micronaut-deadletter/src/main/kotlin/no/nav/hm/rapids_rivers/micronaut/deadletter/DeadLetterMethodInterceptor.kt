@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 
 @Singleton
 class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRepository): MethodInterceptor<Any, Any> {
+    private var exceptionCount = 0
 
     companion object {
         private val LOG = LoggerFactory.getLogger(DeadLetterMethodInterceptor::class.java)
@@ -23,6 +24,7 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
             return context.proceed()
         }
         catch (e: Exception) {
+            exceptionCount++
             val riverName = context.targetMethod.declaringClass.simpleName
             LOG.error("Error executing method ${context.targetMethod}", e)
             val annotation = context.targetMethod.getAnnotation(DeadLetterSupport::class.java)!!
@@ -30,7 +32,7 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
             val eventId = packet["eventId"].asText() ?: UUID.randomUUID().toString()
             val eventName = packet["eventName"].asText() ?: riverName
             val messageContext = context.parameters[annotation.messageContext]!!.value as MessageContext
-            packet
+
             runBlocking {
                 deadLetterRepository.save(
                     DeadLetter(
@@ -42,6 +44,11 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
                         riverName = riverName
                     )
                 )
+            }
+
+            if (exceptionCount>annotation.exceptionsToCatch) {
+                LOG.error("Error count exceeded ${annotation.exceptionsToCatch}, stopping execution")
+                throw e
             }
         }
         return null
