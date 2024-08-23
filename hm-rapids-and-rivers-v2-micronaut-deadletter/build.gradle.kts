@@ -1,14 +1,14 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.internal.execution.history.changes.ExecutionStateChanges.incremental
 
-val micronautVersion="4.4.0"
+val micronautVersion="4.5.0"
 val jakartaPersistenceVersion = "3.1.0"
 val junitJupiterVersion = "5.9.2"
 val tcVersion = "1.17.6"
 val postgresqlVersion = "42.7.2"
 
 plugins {
-    id("io.micronaut.library") version "4.4.0"
+    id("io.micronaut.library") version "4.4.2"
 }
 
 dependencies {
