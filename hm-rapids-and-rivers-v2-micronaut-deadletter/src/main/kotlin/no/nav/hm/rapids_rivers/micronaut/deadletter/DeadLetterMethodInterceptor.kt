@@ -33,6 +33,10 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
             val eventName = packet["eventName"].asText() ?: riverName
             val messageContext = context.parameters[annotation.messageContext]!!.value as MessageContext
 
+            if (exceptionCount>annotation.exceptionsToCatch) {
+                LOG.error("Error count exceeded ${annotation.exceptionsToCatch}, stopping execution")
+                throw e
+            }
             runBlocking {
                 deadLetterRepository.save(
                     DeadLetter(
@@ -44,11 +48,6 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
                         riverName = riverName
                     )
                 )
-            }
-
-            if (exceptionCount>annotation.exceptionsToCatch) {
-                LOG.error("Error count exceeded ${annotation.exceptionsToCatch}, stopping execution")
-                throw e
             }
         }
         return null
