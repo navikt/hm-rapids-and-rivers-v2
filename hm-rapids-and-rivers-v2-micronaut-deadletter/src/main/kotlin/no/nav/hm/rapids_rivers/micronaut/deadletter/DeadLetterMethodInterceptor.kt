@@ -24,7 +24,6 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
             return context.proceed()
         }
         catch (e: Exception) {
-            exceptionCount++
             val riverName = context.targetMethod.declaringClass.simpleName
             LOG.error("Error executing method ${context.targetMethod}", e)
             val annotation = context.targetMethod.getAnnotation(DeadLetterSupport::class.java)!!
@@ -49,6 +48,7 @@ class DeadLetterMethodInterceptor(private val deadLetterRepository: DeadLetterRe
                     )
                 )
             }
+            exceptionCount++
         }
         return null
     }
