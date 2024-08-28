@@ -19,9 +19,8 @@ class KafkaRapidService(private val kafkaRapid: KafkaRapid,
     }
 
     override fun <T : Any> pushToRapid(key: String?, eventName: String?, payload: T,
-                                       keyValues : Map<String, Any>) {
-        val eventId =  UUID.randomUUID()
-        LOG.debug("push to rapid key: $key, eventId: $eventId, eventName: $eventName, " +
+                                       keyValues : Map<String, Any>, eventId: UUID) {
+        LOG.info("push to rapid with partition key: $key, eventId: $eventId, eventName: $eventName, " +
                 "payloadType: ${payload::class.java.simpleName}")
         produceEvent(key, mapOf("eventId" to eventId, "eventName" to eventName,
             "createdTime" to LocalDateTime.now(),
