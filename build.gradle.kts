@@ -19,7 +19,7 @@ subprojects {
 
     val jvmTarget = "17"
     val kafkaVersion = "3.3.1"
-    val micrometerRegistryPrometheusVersion = "1.9.1"
+    val micrometerRegistryPrometheusVersion = "1.13.1"
     val junitJupiterVersion = "5.9.1"
     val jacksonVersion = "2.14.1"
     val logbackClassicVersion = "1.4.5"
@@ -38,7 +38,7 @@ subprojects {
 
         api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
         api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-
+        api("io.micrometer:micrometer-core:$micrometerRegistryPrometheusVersion")
         api("io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheusVersion")
 
         testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4")

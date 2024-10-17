@@ -3,8 +3,6 @@ package no.nav.helse.rapids_rivers
 import io.ktor.server.application.Application
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.*
-import io.micrometer.core.instrument.MeterRegistry
-import io.prometheus.client.CollectorRegistry
 import kotlinx.coroutines.delay
 import org.slf4j.LoggerFactory
 import java.io.File

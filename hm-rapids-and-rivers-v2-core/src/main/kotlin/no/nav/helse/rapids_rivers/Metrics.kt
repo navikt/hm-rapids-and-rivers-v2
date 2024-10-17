@@ -1,19 +1,20 @@
 package no.nav.helse.rapids_rivers
 
-import io.prometheus.client.CollectorRegistry
-import io.prometheus.client.Counter
-import io.prometheus.client.Histogram
+import io.prometheus.metrics.core.metrics.Counter
+import io.prometheus.metrics.core.metrics.Histogram
+import io.prometheus.metrics.model.registry.PrometheusRegistry
+
 
 object Metrics {
-    private val registry = CollectorRegistry.defaultRegistry
+    private val registry = PrometheusRegistry.defaultRegistry
 
-    val onPacketHistorgram = Histogram.build()
+    val onPacketHistorgram = Histogram.builder()
         .name("on_packet_seconds")
         .help("Hvor lang det tar å lese en gjenkjent melding i sekunder")
         .labelNames("rapid", "river", "event_name")
         .register(registry)
 
-    val onMessageCounter = Counter.build()
+    val onMessageCounter = Counter.builder()
         .name("message_counter")
         .help("Hvor mange meldinger som er lest inn")
         .labelNames("rapid", "river", "validated")

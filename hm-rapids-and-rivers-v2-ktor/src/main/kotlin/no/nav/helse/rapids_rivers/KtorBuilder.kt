@@ -18,7 +18,6 @@ import io.ktor.server.response.respondText
 import io.ktor.server.response.respondTextWriter
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.binder.MeterBinder
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
@@ -26,10 +25,6 @@ import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.prometheus.client.CollectorRegistry
-import io.prometheus.client.exporter.common.TextFormat
 import org.slf4j.Logger
 
 class KtorBuilder {
@@ -66,11 +61,7 @@ class KtorBuilder {
 
             routing {
                 get("/metrics") {
-                    val names = call.request.queryParameters.getAll("name[]")?.toSet() ?: emptySet()
-
-                    call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
-                        TextFormat.write004(this, DefaultMeterRegistry.collectorRegistry.filteredMetricFamilySamples(names))
-                    }
+                    call.respond(DefaultMeterRegistry.Default.scrape())
                 }
             }
         }

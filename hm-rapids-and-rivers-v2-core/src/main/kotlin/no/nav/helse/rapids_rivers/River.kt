@@ -1,13 +1,10 @@
 package no.nav.helse.rapids_rivers
 
 import io.micrometer.core.instrument.Clock
-import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.Timer
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.prometheus.client.CollectorRegistry
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import io.prometheus.metrics.model.registry.PrometheusRegistry
+
 import no.nav.helse.rapids_rivers.River.PacketListener.Companion.Name
 import java.util.*
 
@@ -20,7 +17,7 @@ fun interface RandomIdGenerator {
 
 class DefaultMeterRegistry {
     companion object {
-        val collectorRegistry = CollectorRegistry.defaultRegistry
+        val collectorRegistry = PrometheusRegistry.defaultRegistry
         val Default = PrometheusMeterRegistry(
             PrometheusConfig.DEFAULT,
             collectorRegistry,
