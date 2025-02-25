@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.9.21"
     kotlin("kapt") version "1.9.21"
+    id("com.github.ben-manes.versions") version "0.47.0"
     id("java")
     id("maven-publish")
 }
