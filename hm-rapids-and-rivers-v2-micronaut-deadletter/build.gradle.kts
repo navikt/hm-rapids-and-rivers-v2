@@ -4,7 +4,7 @@ val tcVersion = "1.17.6"
 val postgresqlVersion = "42.7.2"
 
 plugins {
-    id("io.micronaut.library") version "4.4.2"
+    id("io.micronaut.library") version "4.5.4"
 }
 
 dependencies {

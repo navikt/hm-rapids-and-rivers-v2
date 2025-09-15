@@ -2,7 +2,7 @@ val micronautVersion="4.9.3"
 
 plugins {
     kotlin("kapt")
-    id("io.micronaut.library") version "4.4.2"
+    id("io.micronaut.library") version "4.5.4"
 }
 
 dependencies {
