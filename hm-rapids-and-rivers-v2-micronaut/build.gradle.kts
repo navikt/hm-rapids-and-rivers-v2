@@ -12,6 +12,7 @@ dependencies {
     kapt("io.micronaut:micronaut-inject")
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
+    implementation("org.apache.commons:commons-lang3:3.18.0")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     testImplementation("io.micronaut:micronaut-http-server-netty")
 }
