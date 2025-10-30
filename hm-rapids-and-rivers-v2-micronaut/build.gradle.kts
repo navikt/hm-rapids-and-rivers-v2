@@ -1,8 +1,8 @@
-val micronautVersion="4.9.3"
+val micronautVersion="4.10.0"
 
 plugins {
     kotlin("kapt")
-    id("io.micronaut.library") version "4.5.4"
+    id("io.micronaut.library") version "4.6.0"
 }
 
 dependencies {
@@ -12,7 +12,6 @@ dependencies {
     kapt("io.micronaut:micronaut-inject")
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
-    implementation("org.apache.commons:commons-lang3:3.18.0")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     testImplementation("io.micronaut:micronaut-http-server-netty")
 }
