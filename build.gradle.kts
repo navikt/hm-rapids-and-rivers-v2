@@ -26,7 +26,7 @@ subprojects {
     val logbackClassicVersion = "1.4.5"
     val logbackEncoderVersion = "7.2"
     val awaitilityVersion = "4.2.0"
-    val kafkaTestcontainerVersion = "1.19.6"
+    val kafkaTestcontainerVersion = "1.20.6"
 
     group = "com.github.navikt"
     version = properties["version"] ?: "local-build"
