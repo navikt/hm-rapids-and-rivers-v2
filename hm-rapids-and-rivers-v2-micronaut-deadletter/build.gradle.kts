@@ -1,6 +1,6 @@
 val micronautVersion="4.10.8"
 val junitJupiterVersion = "5.9.2"
-val tcVersion = "1.17.6"
+val tcVersion = "1.21.4"
 val postgresqlVersion = "42.7.2"
 
 plugins {
