@@ -32,6 +32,8 @@ jobs:
           languages: java-kotlin
       - name: test and build
         run: ./build.sh
+        env:
+          TESTCONTAINERS_RYUK_DISABLED: "true"
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
       - name: prepare release
