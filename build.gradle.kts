@@ -19,7 +19,7 @@ subprojects {
     }
 
     val jvmTarget = "17"
-    val kafkaVersion = "3.7.1"
+    val kafkaVersion = "3.9.1"
     val micrometerRegistryPrometheusVersion = "1.13.1"
     val junitJupiterVersion = "5.9.1"
     val jacksonVersion = "2.14.1"
