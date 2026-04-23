@@ -1,10 +1,14 @@
+
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.21"
-    kotlin("kapt") version "1.9.21"
-    id("com.github.ben-manes.versions") version "0.51.0"
+    id("org.jetbrains.kotlin.jvm") version "2.1.21"
+    id("org.jetbrains.kotlin.plugin.allopen") version "2.1.21"
+    id("com.google.devtools.ksp") version "2.1.21-2.0.1"
+    id("com.gradleup.shadow") version "9.3.1"
+    id ("com.github.ben-manes.versions") version "0.51.0"
     id("java")
     id("maven-publish")
 }
@@ -13,7 +17,7 @@ plugins {
 subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
-        plugin("org.jetbrains.kotlin.kapt")
+        plugin("com.google.devtools.ksp")
         plugin("java")
         plugin("maven-publish")
     }
@@ -59,11 +63,11 @@ subprojects {
     }
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = jvmTarget
+        compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jvmTarget))
     }
 
     tasks.named<KotlinCompile>("compileTestKotlin") {
-        kotlinOptions.jvmTarget = jvmTarget
+        compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jvmTarget))
     }
 
     tasks.withType<Test> {
@@ -79,7 +83,7 @@ subprojects {
     }
 
     tasks.withType<Wrapper> {
-        gradleVersion = "8.5"
+        gradleVersion = "8.11"
     }
 
     repositories {

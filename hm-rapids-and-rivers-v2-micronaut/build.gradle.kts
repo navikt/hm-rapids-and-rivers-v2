@@ -1,7 +1,7 @@
-val micronautVersion="4.10.0"
+val micronautVersion="4.10.12"
 
 plugins {
-    kotlin("kapt")
+
     id("io.micronaut.library") version "4.6.2"
 }
 
@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":hm-rapids-and-rivers-v2-core"))
     runtimeOnly("org.yaml:snakeyaml")
     implementation("io.micronaut:micronaut-jackson-databind")
-    kapt("io.micronaut:micronaut-inject")
+    ksp("io.micronaut:micronaut-inject")
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
     testImplementation("io.micronaut.test:micronaut-test-junit5")

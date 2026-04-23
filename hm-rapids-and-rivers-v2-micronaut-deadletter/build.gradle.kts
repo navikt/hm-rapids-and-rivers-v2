@@ -1,4 +1,4 @@
-val micronautVersion="4.10.8"
+val micronautVersion="4.10.12"
 val junitJupiterVersion = "5.9.2"
 val tcVersion = "1.21.4"
 val postgresqlVersion = "42.7.2"
@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    kapt("io.micronaut:micronaut-inject")
+    ksp("io.micronaut:micronaut-inject")
     implementation("io.micronaut:micronaut-context")
     implementation(project(":hm-rapids-and-rivers-v2-core"))
     implementation(project(":hm-rapids-and-rivers-v2-micronaut"))
@@ -19,7 +19,7 @@ dependencies {
     implementation("org.postgresql:postgresql:${postgresqlVersion}")
     implementation("io.micronaut.data:micronaut-data-jdbc")
     runtimeOnly("io.micronaut.sql:micronaut-jdbc-hikari")
-    kapt("io.micronaut.data:micronaut-data-processor")
+    ksp("io.micronaut.data:micronaut-data-processor")
 
     // coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
