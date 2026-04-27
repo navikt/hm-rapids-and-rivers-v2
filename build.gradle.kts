@@ -28,7 +28,7 @@ subprojects {
     val junitJupiterVersion = "5.9.1"
     val jacksonVersion = "2.20.1"
     val logbackClassicVersion = "1.4.12"
-    val logbackEncoderVersion = "7.2"
+    val logbackEncoderVersion = "9.0"
     val awaitilityVersion = "4.2.0"
     val kafkaTestcontainerVersion = "1.21.4"
 
