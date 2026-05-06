@@ -1,7 +1,7 @@
 val micronautVersion="4.10.12"
 val junitJupiterVersion = "5.9.2"
 val tcVersion = "1.21.4"
-val postgresqlVersion = "42.7.2"
+val postgresqlVersion = "42.7.11"
 
 plugins {
     id("io.micronaut.library") version "4.6.2"
