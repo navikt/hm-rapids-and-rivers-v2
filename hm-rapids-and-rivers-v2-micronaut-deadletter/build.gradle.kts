@@ -1,10 +1,10 @@
-val micronautVersion="4.10.12"
+val micronautVersion="5.0.2"
 val junitJupiterVersion = "5.9.2"
-val tcVersion = "1.21.4"
+val tcVersion = "2.0.1"
 val postgresqlVersion = "42.7.2"
 
 plugins {
-    id("io.micronaut.library") version "4.6.2"
+    id("io.micronaut.library") version "5.0.0"
 }
 
 dependencies {
@@ -33,7 +33,7 @@ dependencies {
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
-    testImplementation("org.testcontainers:postgresql:${tcVersion}")
+    testImplementation("org.testcontainers:testcontainers-postgresql:${tcVersion}")
 
 }
 

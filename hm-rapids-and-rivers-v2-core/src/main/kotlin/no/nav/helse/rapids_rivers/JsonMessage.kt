@@ -1,14 +1,12 @@
 package no.nav.helse.rapids_rivers
 
-
 import com.fasterxml.jackson.core.JsonParseException
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import tools.jackson.databind.DeserializationFeature
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.cfg.DateTimeFeature
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.node.ArrayNode
+import tools.jackson.databind.node.ObjectNode
 import java.net.InetAddress
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -25,10 +23,10 @@ open class JsonMessage(
     val id: String
 
     companion object {
-        private val objectMapper = jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        private val objectMapper = JsonMapper.builderWithJackson2Defaults()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build()
 
         private const val nestedKeySeparator = '.'
         private const val IdKey = "@id"
@@ -163,7 +161,7 @@ open class JsonMessage(
     fun demandAll(key: String, values: List<String>) {
         val node = node(key)
         if (node.isMissingNode) problems.severe("Missing demanded key $key")
-        if (!node.isArray || !node.map(JsonNode::asText).containsAll(values)) problems.severe("Demanded $key does not contains $values")
+        if (!node.isArray || !node.map(JsonNode::asString).containsAll(values)) problems.severe("Demanded $key does not contains $values")
         accessor(key)
     }
 
@@ -177,7 +175,7 @@ open class JsonMessage(
     fun demandAllOrAny(key: String, values: List<String>) {
         val node = node(key)
         if (node.isMissingNode) problems.severe("Missing demanded key $key")
-        if (!node.isArray || node.map(JsonNode::asText).none { it in values }) problems.severe("Demanded array $key does not contain one of $values")
+        if (!node.isArray || node.map(JsonNode::asString).none { it in values }) problems.severe("Demanded array $key does not contain one of $values")
         accessor(key)
     }
 
@@ -243,7 +241,7 @@ open class JsonMessage(
     fun requireAllOrAny(key: String, values: List<String>) {
         val node = node(key)
         if (node.isMissingNode) return problems.error("Missing required key $key")
-        if (!node.isArray || node.map(JsonNode::asText).none { it in values }) {
+        if (!node.isArray || node.map(JsonNode::asString).none { it in values }) {
             return problems.error("Required array $key does not contain one of $values")
         }
         accessor(key)
@@ -252,7 +250,7 @@ open class JsonMessage(
     fun requireAll(key: String, values: List<String>) {
         val node = node(key)
         if (node.isMissingNode) return problems.error("Missing required key $key")
-        if (!node.isArray || !node.map(JsonNode::asText).containsAll(values)) {
+        if (!node.isArray || !node.map(JsonNode::asString).containsAll(values)) {
             return problems.error("Required $key does not contains $values")
         }
         accessor(key)
