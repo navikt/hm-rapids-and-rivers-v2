@@ -4,9 +4,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "2.1.21"
-    id("org.jetbrains.kotlin.plugin.allopen") version "2.1.21"
-    id("com.google.devtools.ksp") version "2.1.21-2.0.1"
+    id("org.jetbrains.kotlin.jvm") version "2.3.0"
+    id("org.jetbrains.kotlin.plugin.allopen") version "2.3.0"
+    id("com.google.devtools.ksp") version "2.3.0"
     id("com.gradleup.shadow") version "9.3.1"
     id ("com.github.ben-manes.versions") version "0.51.0"
     id("java")
@@ -22,15 +22,15 @@ subprojects {
         plugin("maven-publish")
     }
 
-    val jvmTarget = "17"
+    val jvmTarget = "25"
     val kafkaVersion = "4.2.0"
     val micrometerRegistryPrometheusVersion = "1.13.1"
     val junitJupiterVersion = "5.9.1"
-    val jacksonVersion = "2.20.1"
+    val jacksonVersion = "3.1.3"
     val logbackClassicVersion = "1.4.12"
-    val logbackEncoderVersion = "9.0"
+    val logbackEncoderVersion = "8.1"
     val awaitilityVersion = "4.2.0"
-    val kafkaTestcontainerVersion = "1.21.4"
+    val kafkaTestcontainerVersion = "2.0.1"
 
     group = "com.github.navikt"
     version = properties["version"] ?: "local-build"
@@ -41,8 +41,7 @@ subprojects {
 
         api("org.apache.kafka:kafka-clients:$kafkaVersion")
 
-        api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-        api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+        api("tools.jackson.module:jackson-module-kotlin:$jacksonVersion")
         api("io.micrometer:micrometer-core:$micrometerRegistryPrometheusVersion")
         api("io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheusVersion")
 
@@ -52,7 +51,7 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
         testImplementation("org.awaitility:awaitility:$awaitilityVersion")
-        testImplementation("org.testcontainers:kafka:$kafkaTestcontainerVersion")
+        testImplementation("org.testcontainers:testcontainers-kafka:$kafkaTestcontainerVersion")
     }
 
     java {
@@ -83,7 +82,7 @@ subprojects {
     }
 
     tasks.withType<Wrapper> {
-        gradleVersion = "8.11"
+        gradleVersion = "9.5.0"
     }
 
     repositories {

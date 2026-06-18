@@ -1,6 +1,14 @@
 val githubUser: String? by project
 val githubPassword: String? by project
 
+dependencies {
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
 publishing {
     repositories {
         maven {

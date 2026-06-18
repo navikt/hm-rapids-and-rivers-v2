@@ -1,8 +1,8 @@
-val micronautVersion="4.10.12"
+val micronautVersion="5.0.2"
 
 plugins {
 
-    id("io.micronaut.library") version "4.6.2"
+    id("io.micronaut.library") version "5.0.0"
 }
 
 dependencies {

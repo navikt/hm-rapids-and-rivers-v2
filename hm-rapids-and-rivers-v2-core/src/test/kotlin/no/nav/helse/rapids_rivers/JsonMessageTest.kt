@@ -1,15 +1,17 @@
 package no.nav.helse.rapids_rivers
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.node.*
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.cfg.DateTimeFeature
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.node.BooleanNode
+import tools.jackson.databind.node.IntNode
+import tools.jackson.databind.node.MissingNode
+import tools.jackson.databind.node.NullNode
+import tools.jackson.databind.node.StringNode
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -18,37 +20,38 @@ import java.util.*
 
 internal class JsonMessageTest {
 
-    private val objectMapper = jacksonObjectMapper()
-        .registerModule(JavaTimeModule())
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+    private val objectMapper = JsonMapper.builderWithJackson2Defaults()
+        .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .configure(tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .build()
+
     private val ValidJson = "{\"foo\": \"bar\"}"
     private val InvalidJson = "foo"
 
     @Test
     fun `create message from map`() {
         val node = objectMapper.readTree(JsonMessage.newMessage(mapOf("foo" to "bar")).toJson())
-        assertDoesNotThrow { node.path("@id").asText().toUUID() }
-        assertDoesNotThrow { LocalDateTime.parse(node.path("@opprettet").asText()) }
-        assertEquals("bar", node.path("foo").asText())
+        assertDoesNotThrow { node.path("@id").asString().toUUID() }
+        assertDoesNotThrow { LocalDateTime.parse(node.path("@opprettet").asString()) }
+        assertEquals("bar", node.path("foo").asString())
     }
 
     @Test
     fun `create need from map`() {
         val behovsliste = listOf("behov1", "behov2")
         val node = objectMapper.readTree(JsonMessage.newNeed(behovsliste, mapOf("foo" to "bar")).toJson())
-        assertEquals(behovsliste, node.path("@behov").map(JsonNode::asText))
-        assertDoesNotThrow { node.path("@behovId").asText().toUUID() }
-        assertDoesNotThrow { node.path("@id").asText().toUUID() }
-        assertDoesNotThrow { LocalDateTime.parse(node.path("@opprettet").asText()) }
-        assertEquals("behov", node.path("@event_name").asText())
-        assertEquals("bar", node.path("foo").asText())
+        assertEquals(behovsliste, node.path("@behov").values().map { it.asString()})
+        assertDoesNotThrow { node.path("@behovId").asString().toUUID() }
+        assertDoesNotThrow { node.path("@id").asString().toUUID() }
+        assertDoesNotThrow { LocalDateTime.parse(node.path("@opprettet").asString()) }
+        assertEquals("behov", node.path("@event_name").asString())
+        assertEquals("bar", node.path("foo").asString())
     }
 
     @Test
     fun `overwrite default values`() {
         val node = objectMapper.readTree(JsonMessage.newNeed(listOf("behov1"), mapOf("@event_name" to "other_name")).toJson())
-        assertEquals("other_name", node.path("@event_name").asText())
+        assertEquals("other_name", node.path("@event_name").asString())
     }
 
     @Test
@@ -57,14 +60,14 @@ internal class JsonMessageTest {
         val msg = JsonMessage.newMessage(mapOf("@id" to customId))
         val node = objectMapper.readTree(msg.toJson())
         assertEquals(customId.toString(), msg.id)
-        assertEquals(msg.id, node.path("@id").asText())
+        assertEquals(msg.id, node.path("@id").asString())
     }
 
     @Test
     fun `sets id if missing`() {
         val msg = JsonMessage.newMessage()
         val node = objectMapper.readTree(msg.toJson())
-        assertDoesNotThrow { node.path("@id").asText().toUUID() }
+        assertDoesNotThrow { node.path("@id").asString().toUUID() }
     }
 
     @Test
@@ -80,13 +83,13 @@ internal class JsonMessageTest {
         val msg = JsonMessage.newMessage() { expected }
         val json1 = JsonMessage.populateStandardFields(msg, msg.toJson())
         val node1 = objectMapper.readTree(json1)
-        assertEquals(expected, node1.path("@forårsaket_av").path("id").asText())
-        assertEquals(expected, node1.path("@id").asText())
+        assertEquals(expected, node1.path("@forårsaket_av").path("id").asString())
+        assertEquals(expected, node1.path("@id").asString())
         val expected2 = "differentRandom"
         val json2 = JsonMessage.populateStandardFields(msg, msg.toJson()) { expected2 }
         val node2 = objectMapper.readTree(json2)
-        assertEquals(expected, node2.path("@forårsaket_av").path("id").asText())
-        assertEquals(expected2, node2.path("@id").asText())
+        assertEquals(expected, node2.path("@forårsaket_av").path("id").asString())
+        assertEquals(expected2, node2.path("@id").asString())
     }
 
     @Test
@@ -212,7 +215,7 @@ internal class JsonMessageTest {
         val message = JsonMessage("{}", problems)
         assertThrows<IllegalArgumentException> { message["key"] }
         message["key"] = "Hello!"
-        assertEquals("Hello!", message["key"].asText())
+        assertEquals("Hello!", message["key"].asString())
     }
 
     @Test
@@ -223,7 +226,7 @@ internal class JsonMessageTest {
         }
         assertTrue(message["key"].isMissingNode)
         message["key"] = "Hello!"
-        assertEquals("Hello!", message["key"].asText())
+        assertEquals("Hello!", message["key"].asString())
     }
 
     @Test
@@ -256,17 +259,17 @@ internal class JsonMessageTest {
             message(json).also {
                 assertThrows<IllegalArgumentException> { it["foo"] }
                 it.requireKey("foo")
-                assertEquals("bar", it["foo"].textValue())
+                assertEquals("bar", it["foo"].stringValue())
             }
             message(json).also {
                 it.requireKey("foo", "baz")
-                assertEquals("bar", it["foo"].textValue())
+                assertEquals("bar", it["foo"].stringValue())
                 assertThrows<IllegalArgumentException> { it["baz"] }
             }
             message(json).also {
                 assertThrows<IllegalArgumentException> { it["foo"] }
                 it.interestedIn("foo")
-                assertEquals("bar", it["foo"].textValue())
+                assertEquals("bar", it["foo"].stringValue())
             }
         }
     }
@@ -277,12 +280,12 @@ internal class JsonMessageTest {
             message(json).also {
                 assertThrows<IllegalArgumentException> { it["foo.bar"] }
                 it.requireKey("foo.bar")
-                assertEquals("baz", it["foo.bar"].textValue())
+                assertEquals("baz", it["foo.bar"].stringValue())
             }
             message(json).also {
                 assertThrows<IllegalArgumentException> { it["foo.bar"] }
                 it.interestedIn("foo.bar")
-                assertEquals("baz", it["foo.bar"].textValue())
+                assertEquals("baz", it["foo.bar"].stringValue())
             }
         }
     }
@@ -413,7 +416,7 @@ internal class JsonMessageTest {
                 JsonMessage(json, problems).apply {
                     demandValue("foo", "bar")
                     assertFalse(problems.hasErrors())
-                    assertEquals("bar", this["foo"].asText())
+                    assertEquals("bar", this["foo"].asString())
                 }
             }
         }
@@ -526,7 +529,7 @@ internal class JsonMessageTest {
                 JsonMessage(json, problems).apply {
                     demandValue("foo", "bar")
                     assertFalse(problems.hasErrors())
-                    assertEquals("bar", this["foo"].asText())
+                    assertEquals("bar", this["foo"].asString())
                 }
             }
         }
@@ -797,8 +800,8 @@ internal class JsonMessageTest {
         }
         assertTrue(message["foo"].isNull)
         assertTrue(message["bar"].isMissingNode)
-        assertNull(message["foo"].textValue())
-        assertNull(message["bar"].textValue())
+        assertNull(message["foo"].stringValue())
+        assertNull(message["bar"].asString(null))
     }
 
     @Test
@@ -833,9 +836,9 @@ internal class JsonMessageTest {
         assertThrows<DateTimeParseException> { NullNode.instance.asLocalDate() }
         assertThrows<DateTimeParseException> { BooleanNode.TRUE.asLocalDate() }
         assertThrows<DateTimeParseException> { IntNode(0).asLocalDate() }
-        assertThrows<DateTimeParseException> { TextNode.valueOf("").asLocalDate() }
+        assertThrows<DateTimeParseException> { StringNode.valueOf("").asLocalDate() }
         with("2020-01-01") {
-            assertEquals(LocalDate.parse(this), TextNode.valueOf(this).asLocalDate())
+            assertEquals(LocalDate.parse(this), StringNode.valueOf(this).asLocalDate())
         }
     }
 
@@ -845,9 +848,9 @@ internal class JsonMessageTest {
         assertThrows<DateTimeParseException> { NullNode.instance.asYearMonth() }
         assertThrows<DateTimeParseException> { BooleanNode.TRUE.asYearMonth() }
         assertThrows<DateTimeParseException> { IntNode(0).asYearMonth() }
-        assertThrows<DateTimeParseException> { TextNode.valueOf("").asYearMonth() }
+        assertThrows<DateTimeParseException> { StringNode.valueOf("").asYearMonth() }
         with("2020-01") {
-            assertEquals(YearMonth.parse(this), TextNode.valueOf(this).asYearMonth())
+            assertEquals(YearMonth.parse(this), StringNode.valueOf(this).asYearMonth())
         }
     }
 
@@ -857,9 +860,9 @@ internal class JsonMessageTest {
         assertNull(NullNode.instance.asOptionalLocalDate())
         assertNull(BooleanNode.TRUE.asOptionalLocalDate())
         assertNull(IntNode(0).asOptionalLocalDate())
-        assertNull(TextNode.valueOf("").asOptionalLocalDate())
+        assertNull(StringNode.valueOf("").asOptionalLocalDate())
         with("2020-01-01") {
-            assertEquals(LocalDate.parse(this), TextNode.valueOf(this).asOptionalLocalDate())
+            assertEquals(LocalDate.parse(this), StringNode.valueOf(this).asOptionalLocalDate())
         }
     }
 
@@ -870,9 +873,9 @@ internal class JsonMessageTest {
         assertThrows<DateTimeParseException> { NullNode.instance.asLocalDateTime() }
         assertThrows<DateTimeParseException> { BooleanNode.TRUE.asLocalDateTime() }
         assertThrows<DateTimeParseException> { IntNode(0).asLocalDateTime() }
-        assertThrows<DateTimeParseException> { TextNode.valueOf("").asLocalDateTime() }
+        assertThrows<DateTimeParseException> { StringNode.valueOf("").asLocalDateTime() }
         with("2020-01-01T00:00:00.000000") {
-            assertEquals(LocalDateTime.parse(this), TextNode.valueOf(this).asLocalDateTime())
+            assertEquals(LocalDateTime.parse(this), StringNode.valueOf(this).asLocalDateTime())
         }
     }
 
@@ -881,7 +884,7 @@ internal class JsonMessageTest {
         JsonMessage(msg, problems).also {
             it.requireValue(key, expectedValue)
             assertFalse(problems.hasErrors())
-            assertEquals(expectedValue, it[key].textValue())
+            assertEquals(expectedValue, it[key].stringValue())
         }
     }
 
