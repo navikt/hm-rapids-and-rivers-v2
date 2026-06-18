@@ -1,6 +1,7 @@
 package no.nav.helse.rapids_rivers
 
 import com.fasterxml.jackson.core.JsonParseException
+import tools.jackson.core.JacksonException
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.cfg.DateTimeFeature
@@ -51,7 +52,7 @@ open class JsonMessage(
         internal fun populateStandardFields(originalMessage: JsonMessage, message: String, randomIdGenerator: RandomIdGenerator = originalMessage.idGenerator): String {
             return (objectMapper.readTree(message) as ObjectNode).also {
                 it.replace("@forårsaket_av", objectMapper.valueToTree(originalMessage.tracing))
-                if (it.path("@id").isMissingOrNull() || it.path("@id").asText() == originalMessage.id) {
+                if (it.path("@id").isMissingOrNull() || it.path("@id").asString() == originalMessage.id) {
                     val id = randomIdGenerator.generateId()
                     val opprettet = LocalDateTime.now()
                     it.put(IdKey, id)
@@ -81,10 +82,10 @@ open class JsonMessage(
     init {
         json = try {
             objectMapper.readTree(originalMessage)
-        } catch (err: JsonParseException) {
+        } catch (err: JacksonException) {
             problems.severe("Invalid JSON per Jackson library: ${err.message}")
         }
-        id = json.path("@id").takeUnless { it.isMissingOrNull() }?.asText() ?: idGenerator.generateId().also {
+        id = json.path("@id").takeUnless { it.isMissingOrNull() }?.asString() ?: idGenerator.generateId().also {
             set("@id", it)
         }
         val opprettet = LocalDateTime.now()
@@ -95,11 +96,11 @@ open class JsonMessage(
 
     private val tracing =
         mutableMapOf<String, Any>(
-            "id" to json.path(IdKey).asText()
+            "id" to json.path(IdKey).asString()
         ).apply {
-            compute("opprettet") { _, _ -> json.path(OpprettetKey).asText().takeUnless { it.isBlank() } }
-            compute("event_name") { _, _ -> json.path(EventNameKey).asText().takeUnless { it.isBlank() } }
-            compute("behov") { _, _ -> json.path(NeedKey).map(JsonNode::asText).takeUnless(List<*>::isEmpty) }
+            compute("opprettet") { _, _ -> json.path(OpprettetKey).asString().takeUnless { it.isBlank() } }
+            compute("event_name") { _, _ -> json.path(EventNameKey).asString().takeUnless { it.isBlank() } }
+            compute("behov") { _, _ -> json.path(NeedKey).values().map(JsonNode::asString).takeUnless(List<*>::isEmpty) }
         }.toMap()
 
     fun rejectKey(vararg key: String) {
@@ -114,7 +115,7 @@ open class JsonMessage(
 
     fun rejectValue(key: String, value: String) {
         val node = node(key)
-        if (!node.isMissingOrNull() && node.isTextual && node.asText() == value) problems.severe("Rejected key $key with value $value")
+        if (!node.isMissingOrNull() && node.isString && node.asString() == value) problems.severe("Rejected key $key with value $value")
         accessor(key)
     }
 
@@ -126,7 +127,7 @@ open class JsonMessage(
 
     fun rejectValues(key: String, values: List<String>) {
         val node = node(key)
-        if (!node.isMissingOrNull() && node.asText() in values) problems.severe("Rejected key $key with value ${node.asText()}")
+        if (!node.isMissingOrNull() && node.asString() in values) problems.severe("Rejected key $key with value ${node.asString()}")
         accessor(key)
     }
 
@@ -140,7 +141,7 @@ open class JsonMessage(
     fun demandValue(key: String, value: String) {
         val node = node(key)
         if (node.isMissingNode) problems.severe("Missing demanded key $key")
-        if (!node.isTextual || node.asText() != value) problems.severe("Demanded $key is not string $value")
+        if (!node.isString || node.asString() != value) problems.severe("Demanded $key is not string $value")
         accessor(key)
     }
 
@@ -161,21 +162,21 @@ open class JsonMessage(
     fun demandAll(key: String, values: List<String>) {
         val node = node(key)
         if (node.isMissingNode) problems.severe("Missing demanded key $key")
-        if (!node.isArray || !node.map(JsonNode::asString).containsAll(values)) problems.severe("Demanded $key does not contains $values")
+        if (!node.isArray || !node.values().map { it.asString() }.containsAll(values)) problems.severe("Demanded $key does not contains $values")
         accessor(key)
     }
 
     fun demandAny(key: String, values: List<String>) {
         val node = node(key)
         if (node.isMissingNode) problems.severe("Missing demanded key $key")
-        if (!node.isTextual || node.asText() !in values) problems.severe("Demanded $key must be one of $values")
+        if (!node.isString || node.asString() !in values) problems.severe("Demanded $key must be one of $values")
         accessor(key)
     }
 
     fun demandAllOrAny(key: String, values: List<String>) {
         val node = node(key)
         if (node.isMissingNode) problems.severe("Missing demanded key $key")
-        if (!node.isArray || node.map(JsonNode::asString).none { it in values }) problems.severe("Demanded array $key does not contain one of $values")
+        if (!node.isArray || node.values().map(JsonNode::asString).none { it in values }) problems.severe("Demanded array $key does not contain one of $values")
         accessor(key)
     }
 
@@ -208,14 +209,14 @@ open class JsonMessage(
     fun requireValue(key: String, value: String) {
         val node = node(key)
         if (node.isMissingNode) return problems.error("Missing required key $key")
-        if (!node.isTextual || node.asText() != value) return problems.error("Required $key is not string $value")
+        if (!node.isString || node.asString() != value) return problems.error("Required $key is not string $value")
         accessor(key)
     }
 
     fun requireAny(key: String, values: List<String>) {
         val node = node(key)
         if (node.isMissingNode) return problems.error("Missing required key $key")
-        if (!node.isTextual || node.asText() !in values) return problems.error("Required $key must be one of $values")
+        if (!node.isString || node.asString() !in values) return problems.error("Required $key must be one of $values")
         accessor(key)
     }
 
@@ -241,7 +242,7 @@ open class JsonMessage(
     fun requireAllOrAny(key: String, values: List<String>) {
         val node = node(key)
         if (node.isMissingNode) return problems.error("Missing required key $key")
-        if (!node.isArray || node.map(JsonNode::asString).none { it in values }) {
+        if (!node.isArray || node.values().map(JsonNode::asString).none { it in values }) {
             return problems.error("Required array $key does not contain one of $values")
         }
         accessor(key)
@@ -250,7 +251,7 @@ open class JsonMessage(
     fun requireAll(key: String, values: List<String>) {
         val node = node(key)
         if (node.isMissingNode) return problems.error("Missing required key $key")
-        if (!node.isArray || !node.map(JsonNode::asString).containsAll(values)) {
+        if (!node.isArray || !node.values().map(JsonNode::asString).containsAll(values)) {
             return problems.error("Required $key does not contains $values")
         }
         accessor(key)
@@ -277,7 +278,7 @@ open class JsonMessage(
 
     fun forbidValues(key: String, values: List<String>) {
         val node = node(key)
-        if (!node.isMissingOrNull() && node.isTextual && node.asText() in values) return problems.error("Required $key is one of $values")
+        if (!node.isMissingOrNull() && node.isString && node.asString() in values) return problems.error("Required $key is one of $values")
         accessor(key)
     }
 
@@ -336,22 +337,22 @@ fun String.toUUID(): UUID = UUID.fromString(this)
 fun JsonNode.isMissingOrNull() = isMissingNode || isNull
 
 fun JsonNode.asLocalDate(): LocalDate =
-    asText().let { LocalDate.parse(it) }
+    asString().let { LocalDate.parse(it) }
 
 fun JsonNode.asYearMonth(): YearMonth =
-    asText().let { YearMonth.parse(it) }
+    asString().let { YearMonth.parse(it) }
 
 fun JsonNode.asOptionalLocalDate() =
-    takeIf(JsonNode::isTextual)
-        ?.asText()
+    takeIf(JsonNode::isString)
+        ?.asString()
         ?.takeIf(String::isNotEmpty)
         ?.let { LocalDate.parse(it) }
 
 fun JsonNode.asOptionalLocalDateTime() =
-    takeIf(JsonNode::isTextual)
-        ?.asText()
+    takeIf(JsonNode::isString)
+        ?.asString()
         ?.takeIf(String::isNotEmpty)
         ?.let { LocalDateTime.parse(it) }
 
 fun JsonNode.asLocalDateTime(): LocalDateTime =
-    asText().let { LocalDateTime.parse(it) }
+    asString().let { LocalDateTime.parse(it) }

@@ -68,7 +68,7 @@ internal class ReplayableRapidsConnectionTest {
         assertEquals(2, packetInspector.size)
         assertEquals(2, testRapid.inspektør.size)
         assertEquals(key, testRapid.inspektør.key(1))
-        assertEquals("bar", testRapid.inspektør.message(1).path("foo").asText())
+        assertEquals("bar", testRapid.inspektør.message(1).path("foo").asString())
     }
 
     @Test
@@ -88,7 +88,7 @@ internal class ReplayableRapidsConnectionTest {
         assertEquals(2, packetInspector.size)
         assertEquals(2, testRapid.inspektør.size)
         assertEquals(newKey, testRapid.inspektør.key(1))
-        assertEquals("bar", testRapid.inspektør.message(1).path("foo").asText())
+        assertEquals("bar", testRapid.inspektør.message(1).path("foo").asString())
     }
 
     private class PacketInspector(

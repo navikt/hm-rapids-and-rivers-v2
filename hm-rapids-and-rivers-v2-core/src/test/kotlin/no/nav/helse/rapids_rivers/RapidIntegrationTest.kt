@@ -1,8 +1,5 @@
 package no.nav.helse.rapids_rivers
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.*
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.admin.AdminClient
@@ -24,6 +21,8 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import org.testcontainers.containers.KafkaContainer
 import org.testcontainers.utility.DockerImageName
+import tools.jackson.databind.cfg.DateTimeFeature
+import tools.jackson.databind.json.JsonMapper
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
@@ -32,9 +31,10 @@ import java.util.concurrent.TimeUnit.SECONDS
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class RapidIntegrationTest {
-    private val objectMapper = jacksonObjectMapper()
-        .registerModule(JavaTimeModule())
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    private val objectMapper = JsonMapper.builderWithJackson2Defaults()
+        .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .build()
+
     private val consumerId = "test-app"
 
     private val testTopic = "a-test-topic"
@@ -157,7 +157,7 @@ internal class RapidIntegrationTest {
                 .until { !rapid.isRunning() }
 
         val actualOffset = kafkaAdmin
-                ?.listConsumerGroupOffsets(consumerId)
+                .listConsumerGroupOffsets(consumerId)
                 ?.partitionsToOffsetAndMetadata()
                 ?.get()
                 ?.getValue(TopicPartition(testTopic, 0))
@@ -165,7 +165,7 @@ internal class RapidIntegrationTest {
         val metadata = actualOffset.metadata() ?: fail { "expected metadata to be present in OffsetAndMetadata" }
         assertEquals(expectedOffset, actualOffset.offset())
         assertTrue(objectMapper.readTree(metadata).has("groupInstanceId"))
-        assertDoesNotThrow { LocalDateTime.parse(objectMapper.readTree(metadata).path("time").asText()) }
+        assertDoesNotThrow { LocalDateTime.parse(objectMapper.readTree(metadata).path("time").asString()) }
     }
 
     private fun ensureRapidIsActive() {
@@ -190,7 +190,7 @@ internal class RapidIntegrationTest {
         val recordMetadata = waitForReply(testTopic, serviceId, eventName, value)
 
         val offsets = kafkaAdmin
-            ?.listConsumerGroupOffsets(consumerId)
+            .listConsumerGroupOffsets(consumerId)
             ?.partitionsToOffsetAndMetadata()
             ?.get()
             ?: fail { "was not able to fetch committed offset for consumer $consumerId" }
@@ -198,7 +198,7 @@ internal class RapidIntegrationTest {
         val metadata = actualOffset.metadata() ?: fail { "expected metadata to be present in OffsetAndMetadata" }
         assertTrue(actualOffset.offset() >= recordMetadata.offset())
         assertTrue(objectMapper.readTree(metadata).has("groupInstanceId"))
-        assertDoesNotThrow { LocalDateTime.parse(objectMapper.readTree(metadata).path("time").asText()) }
+        assertDoesNotThrow { LocalDateTime.parse(objectMapper.readTree(metadata).path("time").asString()) }
     }
 
     @DelicateCoroutinesApi
@@ -284,8 +284,8 @@ internal class RapidIntegrationTest {
                 kafkaConsumer.poll(Duration.ZERO).forEach {
                     if (!sentMessages.contains(it.key())) return@forEach
                     val json = objectMapper.readTree(it.value())
-                    if (eventName != json.path("@event").asText()) return@forEach
-                    if (serviceId != json.path("service_id").asText()) return@forEach
+                    if (eventName != json.path("@event").asString()) return@forEach
+                    if (serviceId != json.path("service_id").asString()) return@forEach
                     return@until true
                 }
                 return@until false

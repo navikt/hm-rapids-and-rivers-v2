@@ -75,7 +75,7 @@ class River(rapidsConnection: RapidsConnection, private val riverMetrics: RiverM
     private fun onPacket(packet: JsonMessage, context: MessageContext) {
         packet.interestedIn("@event_name")
         listeners.forEach {
-            val eventName = packet["@event_name"].textValue() ?: "ukjent"
+            val eventName = packet["@event_name"].asString("ukjent")
             riverMetrics.timer(context.rapidName(), it.name(), eventName) {
                 it.onPacket(packet, context)
             }

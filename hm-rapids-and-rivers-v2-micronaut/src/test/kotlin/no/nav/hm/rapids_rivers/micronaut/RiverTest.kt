@@ -1,12 +1,15 @@
 package no.nav.hm.rapids_rivers.micronaut
 
 import io.micronaut.context.annotation.Context
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.River
+import org.junit.jupiter.api.Test
 
 @Context
-class AnotherTestRiver(river: RiverHead): River.PacketListener {
+@MicronautTest
+class RiverTest(river: RiverHead): River.PacketListener {
 
     init {
         river
@@ -18,4 +21,10 @@ class AnotherTestRiver(river: RiverHead): River.PacketListener {
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         TODO("Not yet implemented")
     }
+
+    @Test
+    fun `happy path`() {
+
+    }
+
 }
