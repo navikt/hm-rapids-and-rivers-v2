@@ -30,7 +30,7 @@ subprojects {
     val logbackClassicVersion = "1.4.12"
     val logbackEncoderVersion = "8.1"
     val awaitilityVersion = "4.2.0"
-    val kafkaTestcontainerVersion = "1.21.4"
+    val kafkaTestcontainerVersion = "2.0.1"
 
     group = "com.github.navikt"
     version = properties["version"] ?: "local-build"
@@ -42,7 +42,6 @@ subprojects {
         api("org.apache.kafka:kafka-clients:$kafkaVersion")
 
         api("tools.jackson.module:jackson-module-kotlin:$jacksonVersion")
-        //api("tools.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
         api("io.micrometer:micrometer-core:$micrometerRegistryPrometheusVersion")
         api("io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheusVersion")
 
@@ -52,7 +51,7 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
         testImplementation("org.awaitility:awaitility:$awaitilityVersion")
-        testImplementation("org.testcontainers:kafka:$kafkaTestcontainerVersion")
+        testImplementation("org.testcontainers:testcontainers-kafka:$kafkaTestcontainerVersion")
     }
 
     java {

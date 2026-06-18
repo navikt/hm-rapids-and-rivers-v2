@@ -1,6 +1,5 @@
 package no.nav.helse.rapids_rivers
 
-import com.fasterxml.jackson.core.JsonParseException
 import tools.jackson.core.JacksonException
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.JsonNode
