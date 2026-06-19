@@ -28,16 +28,14 @@ subprojects {
     val junitJupiterVersion = "5.9.1"
     val jacksonVersion = "3.1.3"
     val logbackClassicVersion = "1.4.12"
-    val logbackEncoderVersion = "8.1"
     val awaitilityVersion = "4.2.0"
-    val kafkaTestcontainerVersion = "2.0.1"
 
     group = "com.github.navikt"
     version = properties["version"] ?: "local-build"
 
     dependencies {
         api("ch.qos.logback:logback-classic:$logbackClassicVersion")
-        api("net.logstash.logback:logstash-logback-encoder:$logbackEncoderVersion")
+
 
         api("org.apache.kafka:kafka-clients:$kafkaVersion")
 
@@ -51,7 +49,6 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
         testImplementation("org.awaitility:awaitility:$awaitilityVersion")
-        testImplementation("org.testcontainers:testcontainers-kafka:$kafkaTestcontainerVersion")
     }
 
     java {

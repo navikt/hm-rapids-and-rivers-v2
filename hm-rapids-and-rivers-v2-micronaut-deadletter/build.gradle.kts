@@ -29,10 +29,10 @@ dependencies {
     implementation("io.micronaut.flyway:micronaut-flyway")
     implementation("org.flywaydb:flyway-database-postgresql:10.6.0")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
-    testImplementation("io.micronaut.test:micronaut-test-junit5")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine")
-    testImplementation("org.testcontainers:testcontainers-postgresql:${tcVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+    testRuntimeOnly("io.micronaut.test:micronaut-test-junit5")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.testcontainers:testcontainers-postgresql:${tcVersion}")
 
 }
 

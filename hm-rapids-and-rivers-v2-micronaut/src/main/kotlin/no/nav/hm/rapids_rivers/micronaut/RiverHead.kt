@@ -1,7 +1,5 @@
 package no.nav.hm.rapids_rivers.micronaut
 
-
-import io.micrometer.core.instrument.MeterRegistry
 import io.micronaut.context.annotation.Prototype
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River

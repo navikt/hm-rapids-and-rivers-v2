@@ -1,18 +1,19 @@
 package no.nav.hm.rapids_rivers.micronaut
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.context.annotation.Requires
 import jakarta.inject.Singleton
 import no.nav.helse.rapids_rivers.KafkaRapid
 import org.apache.kafka.common.KafkaException
 import org.slf4j.LoggerFactory
+import tools.jackson.databind.ObjectMapper
 import java.time.LocalDateTime
 import java.util.*
 
 @Singleton
 @Requires(bean = KafkaRapid::class)
 class KafkaRapidService(private val kafkaRapid: KafkaRapid,
-                        private val objectMapper: ObjectMapper): RapidPushService {
+                        private val objectMapper: ObjectMapper
+): RapidPushService {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(KafkaRapidService::class.java)
