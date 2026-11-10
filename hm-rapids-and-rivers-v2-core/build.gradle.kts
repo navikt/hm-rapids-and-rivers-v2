@@ -1,6 +1,6 @@
 val githubUser: String? by project
 val githubPassword: String? by project
-val kafkaTestcontainerVersion = "2.0.1"
+val kafkaTestcontainerVersion = "2.0.5"
 
 dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
