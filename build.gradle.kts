@@ -42,6 +42,12 @@ subprojects {
     version = properties["version"] ?: "local-build"
 
     dependencies {
+        constraints {
+            api("org.xerial.snappy:snappy-java:1.1.10.12") {
+                because("Avoid vulnerable transitive Snappy versions")
+            }
+        }
+
         api("ch.qos.logback:logback-classic:$logbackClassicVersion")
 
 
