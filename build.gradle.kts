@@ -32,7 +32,7 @@ subprojects {
 
     val jvmTarget = "25"
     val kafkaVersion = "4.2.0"
-    val micrometerRegistryPrometheusVersion = "1.13.1"
+    val micrometerRegistryPrometheusVersion = "1.17.2"
     val junitJupiterVersion = "5.9.1"
     val jacksonVersion = "3.1.8"
     val logbackClassicVersion = "1.4.12"
