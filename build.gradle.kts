@@ -43,6 +43,9 @@ subprojects {
 
     dependencies {
         constraints {
+            api("at.yawk.lz4:lz4-java:1.11.4") {
+                because("Avoid vulnerable transitive LZ4 versions")
+            }
             api("org.xerial.snappy:snappy-java:1.1.10.12") {
                 because("Avoid vulnerable transitive Snappy versions")
             }
