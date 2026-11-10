@@ -1,4 +1,4 @@
-val micronautVersion="5.2.2"
+val micronautVersion="5.2.5"
 
 plugins {
 
