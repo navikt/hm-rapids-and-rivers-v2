@@ -15,6 +15,14 @@ plugins {
 
 
 subprojects {
+    buildscript {
+        repositories {
+            mavenCentral()
+        }
+        dependencies {
+            classpath(platform("tools.jackson:jackson-bom:3.1.8"))
+        }
+    }
     apply {
         plugin("org.jetbrains.kotlin.jvm")
         plugin("com.google.devtools.ksp")
@@ -26,7 +34,7 @@ subprojects {
     val kafkaVersion = "4.2.0"
     val micrometerRegistryPrometheusVersion = "1.13.1"
     val junitJupiterVersion = "5.9.1"
-    val jacksonVersion = "3.1.3"
+    val jacksonVersion = "3.1.8"
     val logbackClassicVersion = "1.4.12"
     val awaitilityVersion = "4.2.0"
 
